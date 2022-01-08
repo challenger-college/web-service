@@ -1,0 +1,5 @@
+input { width: 100%; }
+#editor { 
+    width: 100%;
+    min-height: 30vh;
+}
