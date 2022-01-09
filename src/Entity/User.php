@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -27,6 +29,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string')]
     private $password;
+
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Challenge::class, orphanRemoval: true)]
+    private $challenges;
+
+    public function __construct()
+    {
+        $this->challenges = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -96,5 +106,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|Challenge[]
+     */
+    public function getChallenges(): Collection
+    {
+        return $this->challenges;
+    }
+
+    public function addChallenge(Challenge $challenge): self
+    {
+        if (!$this->challenges->contains($challenge)) {
+            $this->challenges[] = $challenge;
+            $challenge->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChallenge(Challenge $challenge): self
+    {
+        if ($this->challenges->removeElement($challenge)) {
+            // set the owning side to null (unless already changed)
+            if ($challenge->getAuthor() === $this) {
+                $challenge->setAuthor(null);
+            }
+        }
+
+        return $this;
     }
 }
