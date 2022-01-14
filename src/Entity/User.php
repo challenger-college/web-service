@@ -36,6 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
+        $this->createDate = new ArrayCollection();
     }
 
     public function getId(): ?int

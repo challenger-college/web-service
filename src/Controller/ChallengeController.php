@@ -79,13 +79,16 @@ class ChallengeController extends AbstractController
         return $this->json(['error' => 'Formulaire invalide.']);
     }
 
+    #[Route('/api/challenge/check', name: 'challenge_check')]
     public function checkChallenge(Request $request, EntityManagerInterface $em) {
         if ($request->isMethod('POST')):
             if ($challenge_id = $request->get('challenge_id')):
                 $challenge = $em->getRepository(Challenge::class)->find($challenge_id);
                 if ($request->get('isValid') === "true"):
                     $challenge->setValidity(true);
-                else: $challenge->setValidity(true); endif;
+                else: $challenge->setValidity(false); endif;
+                $em->persist($challenge);
+                $em->flush();
             else:
                 return $this->json(['status' => 'error', ['message' => "Challenge ID not found!"]]);
             endif;
