@@ -9,7 +9,7 @@
                 <div class="card-header">
                     <h1 class="card-title">New challenge</h1>
                 </div>
-                <form method="POST">
+                <form method="POST" action="{{ path('challenge') }}">
                     <div class="card-body">
                         <div class="form-group">
                             <input type="text" id="title" name="title" placeholder="Titre" class="form-control required" required>

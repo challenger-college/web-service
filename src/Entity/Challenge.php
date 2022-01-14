@@ -42,6 +42,9 @@ class Challenge
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Test::class, orphanRemoval: true)]
     private $tests;
 
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private $validity;
+
     public function __construct()
     {
         $this->setId(uniqid());
@@ -180,6 +183,18 @@ class Challenge
                 $test->setChallenge(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getValidity(): ?bool
+    {
+        return $this->validity;
+    }
+
+    public function setValidity(?bool $validity): self
+    {
+        $this->validity = $validity;
 
         return $this;
     }

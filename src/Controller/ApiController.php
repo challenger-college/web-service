@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends AbstractController
 {
-    #[Route('/challenges', name: 'api_challenges')]
+    #[Route('/api/challenges', name: 'api_challenges')]
     public function index(EntityManagerInterface $em): Response
     {
         foreach ($em->getRepository(Challenge::class)->findAll() ?? [] as $challenge):
