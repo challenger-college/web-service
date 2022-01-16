@@ -58,7 +58,6 @@ class Challenge
     public function __construct()
     {
         $this->setId(uniqid());
-        $this->setValidity(false);
         $this->setCreateDate(new DateTime());
         $this->tests = new ArrayCollection();
         $this->exercices = new ArrayCollection();

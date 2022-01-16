@@ -17,7 +17,7 @@ class ApiController extends AbstractController
     {
         if ($request->get('token') === $this->getParameter('token.api')):
             foreach ($em->getRepository(Challenge::class)->findBy([], ['createDate' => 'ASC']) ?? [] as $challenge):
-                if (!$challenge->getValidity()):
+                if ($challenge->getValidity() === null):
                     $challenges[] = $challenge->array();
                 endif;
             endforeach;
@@ -56,12 +56,14 @@ class ApiController extends AbstractController
     #[Route('/api/exercices', name: 'api_exercices')]
     public function exercices(Request $request, EntityManagerInterface $em): Response {
         if ($request->get('token') === $this->getParameter('token.api')):
-            foreach ($em->getRepository(Exercice::class)->findBy(['validated' => false], ['createDate' => 'ASC']) ?? [] as $exercice):
-                $exercices[] = [
-                    'id' => $exercice->getId(),
-                    'content' => $exercice->getContent(),
-                    'challenge' => $exercice->getChallenge()->array(),
-                ];
+            foreach ($em->getRepository(Exercice::class)->findBy([], ['createDate' => 'ASC']) ?? [] as $exercice):
+                if ($exercice->getValidity() === null):
+                    $exercices[] = [
+                        'id' => $exercice->getId(),
+                        'content' => $exercice->getContent(),
+                        'challenge' => $exercice->getChallenge()->array(),
+                    ];
+                endif;
             endforeach;
             return $this->json($exercices ?? [], 200);
         endif;

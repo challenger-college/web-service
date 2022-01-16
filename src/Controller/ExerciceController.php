@@ -25,7 +25,7 @@ class ExerciceController extends AbstractController
             $exercice->setChallenge($challenge);
             $exercice->setAuthor($this->getUser());
             $exercice->setCreateDate(new DateTime());
-            $exercice->setValidated(false);
+            $exercice->setValidated(null);
             $exercice->setContent($challenge->getTemplate() ?? "");
             $em->persist($exercice);
             $em->flush();
@@ -33,7 +33,7 @@ class ExerciceController extends AbstractController
 
         if ($request->isMethod('POST') && $exercice->getAuthor() === $this->getUser()):
             $exercice->setContent($request->get('content'));
-            $exercice->setValidated(false);
+            $exercice->setValidated(null);
             $em->persist($exercice);
             $em->flush();
             return $this->json(['status' => 'success', 'message' => 'Exercice submited for validation.']);

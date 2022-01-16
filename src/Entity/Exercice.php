@@ -26,7 +26,7 @@ class Exercice
     #[ORM\JoinColumn(nullable: false)]
     private $challenge;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private $validated;
 
     public function __construct()
@@ -97,7 +97,7 @@ class Exercice
         return $this->validated;
     }
 
-    public function setValidated(bool $validated): self
+    public function setValidated(?bool $validated): self
     {
         $this->validated = $validated;
 

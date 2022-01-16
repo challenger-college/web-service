@@ -36,7 +36,7 @@ class ChallengeController extends AbstractController
             $challenge->setConstraints($request->get('constraints'));
             $challenge->setTimeout($request->get('timeout'));
             $challenge->setFunctionName($request->get('function_name'));
-            $challenge->setValidity(false);
+            $challenge->setValidity(null);
             
             foreach ($request->files ?? [] as $file):
                 if ($file):
