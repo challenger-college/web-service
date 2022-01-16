@@ -32,10 +32,18 @@ class ApiController extends AbstractController
     public function challengeCheck(Request $request, string $challenge_id, EntityManagerInterface $em): Response {
         if ($request->get('token') === $this->getParameter('token.api')):
             $challenge = $em->getRepository(Challenge::class)->find($challenge_id);
-            if (!$challenge): return $this->json(['status' => 'error', 'message' => 'Challenge not found.']); endif;
+            if (!$challenge): return $this->json(['error' => 'Challenge not found.'], 404); endif;
+            if (empty($request->get('isValid'))):
+                return $this->json(['error' => 'Parameter <isValid> not found.'], 400);
+            endif;
+            if (empty($request->get('template'))):
+                return $this->json(['error' => 'Parameter <template> not found.'], 400);
+            endif;
+
             if ($request->get('isValid') === "true"):
                 $challenge->setValidity(true);
             else: $challenge->setValidity(false); endif;
+
             $challenge->setTemplate($request->get('template'));
 
             $em->persist($challenge);
@@ -65,7 +73,15 @@ class ApiController extends AbstractController
     public function exerciceCheck(Request $request, string $exercice_id, EntityManagerInterface $em): Response {
         if ($request->get('token') === $this->getParameter('token.api')):
             $exercice = $em->getRepository(Exercice::class)->find($exercice_id);
-            if (!$exercice): return $this->json(['status' => 'error', 'message' => 'Exercice not found.']); endif;
+            if (!$exercice): return $this->json(['error' => 'Exercice not found.'], 404); endif;
+
+            if (empty($request->get('isValid'))):
+                return $this->json(['error' => 'Parameter <isValid> not found.'], 400);
+            endif;
+            if (empty($request->get('template'))):
+                return $this->json(['error' => 'Parameter <template> not found.'], 400);
+            endif;
+
             if ($request->get('isValid') === "true"):
                 $exercice->setValidated(true);
             else: $exercice->setValidated(false); endif;
