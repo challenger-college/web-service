@@ -22,13 +22,10 @@ class ApiController extends AbstractController
                 endif;
             endforeach;
 
-            return $this->json([
-                'status' => 'success',
-                'challenges' => $challenges ?? []
-            ]);
+            return $this->json($challenges, 200);
         endif;
 
-        return $this->json(['status' => 'error', 'message' => 'Fake token.']);
+        return $this->json(['message' => 'Fake token.'], 401);
     }
 
     #[Route('/api/challenge/{challenge_id}/check', name: 'api_challenge_check')]
@@ -43,9 +40,9 @@ class ApiController extends AbstractController
 
             $em->persist($challenge);
             $em->flush();
-            return $this->json(['status' => 'success', 'message' => 'This challenge was updated.']);
+            return $this->json(['message' => 'This challenge was updated.'], 201);
         endif;
-        return $this->json(['status' => 'error', 'message' => 'Fake token.']);
+        return $this->json(['error' => 'Fake token.'], 401);
     }
 
     #[Route('/api/exercices', name: 'api_exercices')]
@@ -58,10 +55,10 @@ class ApiController extends AbstractController
                     'challenge' => $exercice->getChallenge()->array(),
                 ];
             endforeach;
-            return $this->json(['status' => 'success', 'exercices' => $exercices]);
+            return $this->json($exercices, 200);
         endif;
 
-        return $this->json(['status' => 'error', 'message' => 'Fake token.']);
+        return $this->json(['error' => 'Fake token.'], 401);
     }
 
     #[Route('/api/exercice/{exercice_id}/check', name: 'api_exercice_check')]
@@ -74,9 +71,9 @@ class ApiController extends AbstractController
             else: $exercice->setValidated(false); endif;
             $em->persist($exercice);
             $em->flush();
-            return $this->json(['status' => 'success', 'message' => 'This exercice was updated.']);
+            return $this->json(['message' => 'This exercice was updated.'], 201);
         endif;
 
-        return $this->json(['status' => 'error', 'message' => 'Fake token.']);
+        return $this->json(['error' => 'Fake token.'], 401);
     }
 }
