@@ -26,7 +26,8 @@ class ApiController extends AbstractController
                 $challenges[] = [
                     'function_name' => $challenge->getFunctionName(),
                     'timeout' => $challenge->getTimeout(),
-                    'tests' => $tests
+                    'tests' => $tests,
+                    'isValidity' => $challenge->getValidity()
                 ];
             endforeach;
 
