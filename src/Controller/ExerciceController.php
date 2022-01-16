@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ExerciceController extends AbstractController
 {
     #[Route('/exercice/{challenge_id}/{exercice_id}', name: 'exercice')]
-    public function exercice(Request $request, string $challenge_id, ?string $exercice_id = null, EntityManagerInterface $em): Response
+    public function exercice(Request $request, string $challenge_id, EntityManagerInterface $em, ?string $exercice_id = null): Response
     {
         $challenge = $em->getRepository(Challenge::class)->findOneBy(['id' => $challenge_id, 'validity' => true]);
         
