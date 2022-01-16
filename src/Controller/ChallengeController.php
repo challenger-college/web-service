@@ -23,7 +23,7 @@ class ChallengeController extends AbstractController
         return $this->render('challenge/challenges.html.twig', ['challenges' => $challenges]);
     }
 
-    #[Route('/challenge/{challenge_id}', name: 'challenge')]
+    #[Route('/challenge/{challenge_id}', name: 'challenge', defaults: ["challenge_id" => null])]
     public function challenge(Request $request, ?string $challenge_id = null, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         if ($challenge_id):
