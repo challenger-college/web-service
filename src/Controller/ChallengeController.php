@@ -39,14 +39,16 @@ class ChallengeController extends AbstractController
             $challenge->setValidity(false);
             
             foreach ($request->files ?? [] as $file):
-                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
-                $file->move(
-                    $this->getParameter('images_directory'),
-                    $newFilename
-                );
-                $challenge->setImage($newFilename);
+                if ($file):
+                    $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+                    $file->move(
+                        $this->getParameter('images_directory'),
+                        $newFilename
+                    );
+                    $challenge->setImage($newFilename);
+                endif;
             endforeach;
             
             // Get tests submit in form
