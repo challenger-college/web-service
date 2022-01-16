@@ -31,7 +31,7 @@
                         </div>
                         <div class="form-group">
                             <label for="function_name">Nom de la fonction</label>
-                            <input type="text" id="function_name" name="function_name" placeholder="function_name()" class="form-control required" required {% if challenge.functionName %}value="{{ challenge.functionName }}"{% endif %}>
+                            <input type="text" id="function_name" name="function_name" placeholder="function_name" class="form-control required" onkeyup="$('input#function_name').val(slugify($('input#function_name').val()));" required {% if challenge.functionName %}value="{{ challenge.functionName }}"{% endif %}>
                         </div>
                         <div class="card">
                             <div class="card-header">
@@ -50,7 +50,7 @@
                                                         <input id="input_value_{{ test.id }}_{{ input.id }}" name="inputs_value[{{ test.id }}][{{ input.id }}]" type="text" placeholder="valeur" class="form-control" required onkeyup="inputListener('{{ test.id }}', '{{ input.id }}')" value="{{ input.value }}">
                                                     </div>
                                                     <div class="col-6">
-                                                        <input id="input_name_{{ test.id }}_{{ input.id }}" name="inputs_name[{{ test.id }}][{{ input.id }}]" type="text" placeholder="argument_name" class="form-control" required onkeyup="inputListener('{{ test.id }}', '{{ input.id }}')" value="{{ input.name }}">
+                                                        <input id="input_name_{{ test.id }}_{{ input.id }}" name="inputs_name[{{ test.id }}][{{ input.id }}]" type="text" placeholder="argument_name" class="form-control" required onkeyup="inputListener('{{ test.id }}', '{{ input.id }}'); $('input#input_name_{{ test.id }}_{{ input.id }}').val(slugify($('input#input_name_{{ test.id }}_{{ input.id }}').val()));" value="{{ input.name }}">
                                                     </div>
                                                 </div>
                                             {% endfor %}
@@ -78,10 +78,10 @@
                                     <div class="card-content input">
                                         <div class="row m-2">
                                             <div class="col-6">
-                                                <input id="input_value_0_0" name="inputs_value[0][0]" type="text" placeholder="valeur" class="form-control" {% if challenge.tests|length == 0 %}required{% endif %} onkeyup="inputListener('0', '0')">
+                                                <input id="input_value_0_0" name="inputs_value[0][0]" type="text" placeholder="valeur" class="form-control" {% if challenge.tests|length == 0 %}required{% endif %} onkeyup="inputListener('0', '0');">
                                             </div>
                                             <div class="col-6">
-                                                <input id="input_name_0_0" name="inputs_name[0][0]" type="text" placeholder="argument_name" class="form-control" {% if challenge.tests|length == 0 %}required{% endif %} onkeyup="inputListener('0', '0')">
+                                                <input id="input_name_0_0" name="inputs_name[0][0]" type="text" placeholder="argument_name" class="form-control" {% if challenge.tests|length == 0 %}required{% endif %} onkeyup="inputListener('0', '0'); $('input#input_name_0_0').val(slugify($('input#input_name_0_0').val()));">
                                             </div>
                                         </div>
                                     </div>
@@ -119,7 +119,7 @@
             if ($("#input_"+input_id+" input#input_name_"+input_id+"_"+row_id).val() && $("#input_"+input_id+" input#input_value_"+input_id+"_"+row_id).val()) {
                 new_id = parseInt(row_id) + 1;
                 if ($("#input_"+input_id+" input#input_name_"+input_id+"_"+new_id).length < 1 && $("#input_"+input_id+" input#input_value_"+input_id+"_"+new_id).length < 1) {
-                    new_row = "<div class=\"row m-2\"><div class=\"col-6\"><input id=\"input_value_"+input_id+"_"+new_id+"\" name=\"inputs_value["+input_id+"]["+new_id+"]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"inputListener('"+input_id+"', '"+new_id+"')\"></div><div class=\"col-6\"><input id=\"input_name_"+input_id+"_"+new_id+"\" name=\"inputs_name["+input_id+"]["+new_id+"]\" type=\"text\" placeholder=\"argument_name\" class=\"form-control\" onkeyup=\"inputListener('"+input_id+"', '"+new_id+"')\"></div></div>"
+                    new_row = "<div class=\"row m-2\"><div class=\"col-6\"><input id=\"input_value_"+input_id+"_"+new_id+"\" name=\"inputs_value["+input_id+"]["+new_id+"]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"inputListener('"+input_id+"', '"+new_id+"')\"></div><div class=\"col-6\"><input id=\"input_name_"+input_id+"_"+new_id+"\" name=\"inputs_name["+input_id+"]["+new_id+"]\" type=\"text\" placeholder=\"argument_name\" class=\"form-control\" onkeyup=\"inputListener('"+input_id+"', '"+new_id+"'); $('input#input_name_"+input_id+"_"+new_id+"').val(slugify($('input#input_name_"+input_id+"_"+new_id+"').val()));\"></div></div>"
                     $('#input_'+input_id+' .card-content.input').append(new_row)
                     outputListener(input_id);
                 }
@@ -130,10 +130,38 @@
                 console.log('helllllo');
                 new_id = parseInt(id) + 1;
                 if ($('#input_'+new_id).length < 1) {
-                    new_row = "<div id=\"input_"+new_id+"\" class=\"card inputs mb-3\"><div class=\"card-header\"><h5 class=\"card-title\">Input</h5></div><div class=\"card-content input\"><div class=\"row m-2\"><div class=\"col-6\"><input id=\"input_value_"+new_id+"_0\" name=\"inputs_value["+new_id+"][0]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"inputListener('"+new_id+"', '0')\"></div><div class=\"col-6\"><input id=\"input_name_"+new_id+"_0\" name=\"inputs_name["+new_id+"][0]\" type=\"text\" placeholder=\"argument_name\" class=\"form-control\" onkeyup=\"inputListener('"+new_id+"', '0')\"></div></div></div><div class=\"card-content output\"><div class=\"card\"><div class=\"card-header\"><h5 class=\"card-title\">Output</h5></div><div class=\"card-content\"><div class=\"row m-2\"><div class=\"col-12\"><input id=\"output_value_"+new_id+"\" name=\"output["+new_id+"]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"outputListener('"+new_id+"')\"></div></div></div></div></div></div>"
+                    new_row = "<div id=\"input_"+new_id+"\" class=\"card inputs mb-3\"><div class=\"card-header\"><h5 class=\"card-title\">Input</h5></div><div class=\"card-content input\"><div class=\"row m-2\"><div class=\"col-6\"><input id=\"input_value_"+new_id+"_0\" name=\"inputs_value["+new_id+"][0]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"inputListener('"+new_id+"', '0')\"></div><div class=\"col-6\"><input id=\"input_name_"+new_id+"_0\" name=\"inputs_name["+new_id+"][0]\" type=\"text\" placeholder=\"argument_name\" class=\"form-control\" onkeyup=\"inputListener('"+new_id+"', '0'); $('input#input_name_"+new_id+"_0').val(slugify($('input#input_name_"+new_id+"_0').val()));\"></div></div></div><div class=\"card-content output\"><div class=\"card\"><div class=\"card-header\"><h5 class=\"card-title\">Output</h5></div><div class=\"card-content\"><div class=\"row m-2\"><div class=\"col-12\"><input id=\"output_value_"+new_id+"\" name=\"output["+new_id+"]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"outputListener('"+new_id+"')\"></div></div></div></div></div></div>"
                     $('#inputs').append(new_row);
                 }
             }
+        }
+
+        function normalize(selector) {
+            console.log(selector)
+            $('input#' + selector).val(slugify($('input#' + selector).val()));
+        }
+ 
+        function slugify(str) {
+            str = str.replace(/^\s+|\s+$/g, '_');
+
+            // Make the string lowercase
+            str = str.toLowerCase();
+
+            // Remove accents, swap ñ for n, etc
+            var from = "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆÍÌÎÏŇÑÓÖÒÔÕØŘŔŠŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇíìîïňñóöòôõøðřŕšťúůüùûýÿžþÞĐđßÆa·/_,:;";
+            var to   = "AAAAAACCCDEEEEEEEEIIIINNOOOOOORRSTUUUUUYYZaaaaaacccdeeeeeeeeiiiinnooooooorrstuuuuuyyzbBDdBAa------";
+            for (var i=0, l=from.length ; i<l ; i++) {
+                str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+            }
+
+            // Remove invalid chars
+            str = str.replace(/[^a-z0-9 -]/g, '') 
+            // Collapse whitespace and replace by -
+            .replace(/\s+/g, '_') 
+            // Collapse dashes
+            .replace(/-+/g, '_'); 
+
+            return str;
         }
     </script>
 {% endblock %}
