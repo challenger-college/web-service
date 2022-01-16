@@ -15,7 +15,7 @@
                             <div class="list-group" id="list-tab" role="tablist">
                                 {% for challenge in challenges %}
                                     {% if challenge.validity == true or challenge.author == app.user %}
-                                        <a class="list-group-item list-group-item-action {% if loop.index == 1%}active{% endif %} border {% if challenge.validity == true %}border-success{% elseif challenge.validity == false %}border-danger{% else %}border-warning{% endif %}" id="list-{{ challenge.id }}-list" data-toggle="list" href="#list-{{ challenge.id }}" role="tab" aria-controls="{{ challenge.id }}">{{ challenge.title }}</a>
+                                        <a class="list-group-item list-group-item-action {% if loop.index == 1%}active{% endif %} border {% if challenge.validity == true %}border-success{% elseif challenge.validity is null %}border-warning{% elseif challenge.validity == false %}border-danger{% endif %}" id="list-{{ challenge.id }}-list" data-toggle="list" href="#list-{{ challenge.id }}" role="tab" aria-controls="{{ challenge.id }}">{{ challenge.title }}</a>
                                     {% endif %}
                                 {% endfor %}
                             </div>
