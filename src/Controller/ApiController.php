@@ -22,7 +22,7 @@ class ApiController extends AbstractController
                 endif;
             endforeach;
 
-            return $this->json($challenges, 200);
+            return $this->json($challenges ?? [], 200);
         endif;
 
         return $this->json(['error' => 'Fake token.'], 401);
@@ -63,7 +63,7 @@ class ApiController extends AbstractController
                     'challenge' => $exercice->getChallenge()->array(),
                 ];
             endforeach;
-            return $this->json($exercices, 200);
+            return $this->json($exercices ?? [], 200);
         endif;
 
         return $this->json(['error' => 'Fake token.'], 401);
