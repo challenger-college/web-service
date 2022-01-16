@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ChallengeRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,9 +49,17 @@ class Challenge
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Exercice::class, orphanRemoval: true)]
     private $exercices;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $image;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $template;
+
     public function __construct()
     {
         $this->setId(uniqid());
+        $this->setValidity(false);
+        $this->setCreateDate(new DateTime());
         $this->tests = new ArrayCollection();
         $this->exercices = new ArrayCollection();
     }
@@ -247,5 +256,29 @@ class Challenge
             'timeout' => $this->getTimeout(),
             'tests' => $tests,
         ];    
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
+
+    public function setTemplate(?string $template): self
+    {
+        $this->template = $template;
+
+        return $this;
     }
 }

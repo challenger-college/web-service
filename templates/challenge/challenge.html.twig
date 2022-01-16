@@ -19,7 +19,7 @@
                         </div>
                         <div class="form-group">
                             <label for="formFile" class="form-label">Déposer une image</label>
-                            <input class="form-control" type="file" id="image">
+                            <input class="form-control" type="file" id="image" accept="image/png, image/gif, image/jpeg">
                         </div>
                         <div class="form-group">
                             <label for="contraints">Contraintes</label>
@@ -78,10 +78,10 @@
                                     <div class="card-content input">
                                         <div class="row m-2">
                                             <div class="col-6">
-                                                <input id="input_value_0_0" name="inputs_value[0][0]" type="text" placeholder="valeur" class="form-control" required onkeyup="inputListener('0', '0')">
+                                                <input id="input_value_0_0" name="inputs_value[0][0]" type="text" placeholder="valeur" class="form-control" {% if challenge.tests|length == 0 %}required{% endif %} onkeyup="inputListener('0', '0')">
                                             </div>
                                             <div class="col-6">
-                                                <input id="input_name_0_0" name="inputs_name[0][0]" type="text" placeholder="argument_name" class="form-control" required onkeyup="inputListener('0', '0')">
+                                                <input id="input_name_0_0" name="inputs_name[0][0]" type="text" placeholder="argument_name" class="form-control" {% if challenge.tests|length == 0 %}required{% endif %} onkeyup="inputListener('0', '0')">
                                             </div>
                                         </div>
                                     </div>
@@ -93,7 +93,7 @@
                                             <div class="card-content">
                                                 <div class="row m-2">
                                                     <div class="col-12">
-                                                        <input id="output_value_0" name="output[0]" type="text" placeholder="valeur" class="form-control" required onkeyup="outputListener('0')">
+                                                        <input id="output_value_0" name="output[0]" type="text" placeholder="valeur" class="form-control" {% if challenge.tests|length == 0 %}required{% endif %} onkeyup="outputListener('0')">
                                                     </div>
                                                 </div>
                                             </div>

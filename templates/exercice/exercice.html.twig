@@ -9,34 +9,37 @@
                 <div class="card-header">
                     <h1 class="card-title">{{ challenge.title }}</h1>
                 </div>
-                <form method="POST" action="{{ path('exercice', {'challenge_id': challenge.id}) }}">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label>Description:</label>
-                            <p>{{ challenge.description }}</p>
-                        </div>
-                        {% if challenge.constraints %}
-                            <div class="form-group">
-                                <label>Contraintes:</label>
-                                <p>{{ challenge.constraints }}</p>
-                            </div>
-                        {% endif %}
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <p>{{ challenge.description }}</p>
+                    </div>
 
+                    {% if challenge.image %}
+                        <img src="{{ asset('upload/images/' ~ challenge.image) }}">
+                    {% endif %}
+
+                    {% if challenge.constraints %}
                         <div class="form-group">
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    Temps d'éxecution maximum: <strong>{{ challenge.timeout }}</strong> ms
-                                </div>
+                            <label>Contraintes:</label>
+                            <p>{{ challenge.constraints }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                Temps d'éxecution maximum: <strong>{{ challenge.timeout }}</strong> ms
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div id="editor"></div>
-                        </div>
                     </div>
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-outline-success" >Soumettre</button>
+                    <div class="form-group">
+                        <div id="editor">{{ exercice.content ?? challenge.template }}</div>
                     </div>
-                </form>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-outline-success" onclick="submit();">Soumettre</button>
+                </div>
             </div>
         </div>
     </div>
@@ -49,5 +52,16 @@
         var editor = ace.edit("editor");
         editor.setTheme("ace/theme/dracula");
         editor.session.setMode("ace/mode/python");
+    </script>
+
+    <script>
+        function submit() {
+            var url = "{{ path('exercice', {'challenge_id': challenge.id, 'exercice_id': exercice.id}) }}";
+            $.post(url, {content: editor.getSession().getValue()}, function (data) {
+                if (data.status === "success") {
+                    window.location.href = url;
+                }
+            });
+        }
     </script>
 {% endblock %}

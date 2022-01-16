@@ -26,6 +26,9 @@ class ExerciceController extends AbstractController
             $exercice->setAuthor($this->getUser());
             $exercice->setCreateDate(new DateTime());
             $exercice->setValidated(false);
+            $exercice->setContent($challenge->getTemplate());
+            $em->persist($exercice);
+            $em->flush();
         endif;
 
         if ($request->isMethod('POST') && $exercice->getAuthor() === $this->getUser()):
@@ -37,6 +40,7 @@ class ExerciceController extends AbstractController
             return $this->json(['status' => 'success', 'message' => 'Exercice submited for validation.']);
         endif;
 
-        return $this->render('exercice/exercice.html.twig', ['challenge' => $challenge]);
+
+        return $this->render('exercice/exercice.html.twig', ['challenge' => $challenge, 'exercice' => $exercice]);
     }
 }

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ChallengeController extends AbstractController
 {
@@ -23,7 +24,7 @@ class ChallengeController extends AbstractController
     }
 
     #[Route('/challenge/{challenge_id}', name: 'challenge')]
-    public function challenge(Request $request, ?string $challenge_id = null, EntityManagerInterface $em): Response
+    public function challenge(Request $request, ?string $challenge_id = null, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         if ($challenge_id):
             $challenge = $em->getRepository(Challenge::class)->find($challenge_id);
@@ -35,7 +36,25 @@ class ChallengeController extends AbstractController
             $challenge->setConstraints($request->get('constraints'));
             $challenge->setTimeout($request->get('timeout'));
             $challenge->setFunctionName($request->get('function_name'));
+            $challenge->setValidity(false);
             
+            foreach ($request->files ?? [] as $file):
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                $file->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+
+                // updates the 'brochureFilename' property to store the PDF file name
+                // instead of its contents
+                $challenge->setImage($newFilename);
+            endforeach;
+
             foreach ($request->get('inputs_value') ?? [] as $index => $values):
                 foreach ($values as $key => $value):
                     if ($value !== ""):
@@ -77,7 +96,6 @@ class ChallengeController extends AbstractController
             endforeach;
 
             $challenge->setAuthor($this->getUser());
-            $challenge->setCreateDate(new DateTime());
             $challenge->setUpdateDate(new DateTime());
             $em->persist($challenge);
             $em->flush();
