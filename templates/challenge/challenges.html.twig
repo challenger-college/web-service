@@ -14,7 +14,7 @@
                         <div class="col-4">
                             <div class="list-group" id="list-tab" role="tablist">
                                 {% for challenge in challenges %}
-                                    <a class="list-group-item list-group-item-action {% if loop.index == 1%}active{% endif %}" id="list-{{ challenge.id }}-list" data-toggle="list" href="#list-{{ challenge.id }}" role="tab" aria-controls="{{ challenge.id }}">{{ challenge.title }}</a>
+                                    <a class="list-group-item list-group-item-action {% if loop.index == 1%}active{% endif %} border {% if challenge.validity == true %}border-success{% elseif challenge.validity == false %}border-danger{% else %}border-warning{% endif %}" id="list-{{ challenge.id }}-list" data-toggle="list" href="#list-{{ challenge.id }}" role="tab" aria-controls="{{ challenge.id }}">{{ challenge.title }}</a>
                                 {% endfor %}
                             </div>
                         </div>
@@ -23,9 +23,13 @@
                                 {% for challenge in challenges %}
                                     <div class="tab-pane fade {% if loop.index == 1%}show active{% endif %}" id="list-{{ challenge.id }}" role="tabpanel" aria-labelledby="list-{{ challenge.id }}-list">
                                         {{ challenge.description }}
-                                        <a href="{{ path('exercice', {'challenge_id': challenge.id}) }}" class="btn btn-success float-right m-3">
-                                            Faire l'éxercice !
-                                        </a>
+                                        
+                                        {% if challenge.validity == true %}
+                                            <a href="{{ path('exercice', {'challenge_id': challenge.id}) }}" class="btn btn-success float-right m-3">
+                                                Faire l'éxercice !
+                                            </a>
+                                        {% endif %}
+                                        
                                         {% if challenge.author == app.user %}
                                             <a href="{{ path('challenge', {'challenge_id': challenge.id}) }}" class="btn btn-primary float-right m-3">
                                                 Modifier le challenge

@@ -19,7 +19,7 @@ class ChallengeController extends AbstractController
     #[Route('/challenges', name: 'challenges')]
     public function challenges(EntityManagerInterface $em): Response
     {
-        $challenges = $em->getRepository(Challenge::class)->findBy(['validity' => true], ['createDate' => 'DESC']);
+        $challenges = $em->getRepository(Challenge::class)->findBy([], ['createDate' => 'DESC']);
         return $this->render('challenge/challenges.html.twig', ['challenges' => $challenges]);
     }
 
