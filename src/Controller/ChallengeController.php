@@ -24,7 +24,7 @@ class ChallengeController extends AbstractController
     }
 
     #[Route('/challenge/{challenge_id}', name: 'challenge', defaults: ["challenge_id" => null])]
-    public function challenge(Request $request, ?string $challenge_id = null, EntityManagerInterface $em, SluggerInterface $slugger): Response
+    public function challenge(Request $request, EntityManagerInterface $em, SluggerInterface $slugger, ?string $challenge_id = null,): Response
     {
         if ($challenge_id):
             $challenge = $em->getRepository(Challenge::class)->find($challenge_id);
