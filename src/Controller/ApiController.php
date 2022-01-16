@@ -25,7 +25,7 @@ class ApiController extends AbstractController
             return $this->json($challenges, 200);
         endif;
 
-        return $this->json(['message' => 'Fake token.'], 401);
+        return $this->json(['error' => 'Fake token.'], 401);
     }
 
     #[Route('/api/challenge/{challenge_id}/check', name: 'api_challenge_check')]
