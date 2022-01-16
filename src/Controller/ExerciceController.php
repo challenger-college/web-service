@@ -13,8 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ExerciceController extends AbstractController
 {
-    #[Route('/exercice/{challenge_id}/{exercice_id}', name: 'exercice')]
-    public function exercice(Request $request, string $challenge_id, EntityManagerInterface $em, ?string $exercice_id = null): Response
+    #[Route('/exercice/{challenge_id}/{exercice_id}', name: 'exercice', defaults: ["exercice_id" => null])]
+    public function exercice(Request $request, EntityManagerInterface $em, string $challenge_id, ?string $exercice_id = null): Response
     {
         $challenge = $em->getRepository(Challenge::class)->findOneBy(['id' => $challenge_id, 'validity' => true]);
         
@@ -36,7 +36,7 @@ class ExerciceController extends AbstractController
             $exercice->setValidated(null);
             $em->persist($exercice);
             $em->flush();
-            return $this->json(['status' => 'success', 'message' => 'Exercice submited for validation.']);
+            return $this->json(['message' => 'Exercice submited for validation.'], 201);
         endif;
 
 
