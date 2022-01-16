@@ -40,21 +40,15 @@ class ChallengeController extends AbstractController
             
             foreach ($request->files ?? [] as $file):
                 $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
                 $safeFilename = $slugger->slug($originalFilename);
                 $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
-
-                // Move the file to the directory where brochures are stored
                 $file->move(
                     $this->getParameter('images_directory'),
                     $newFilename
                 );
-
-                // updates the 'brochureFilename' property to store the PDF file name
-                // instead of its contents
                 $challenge->setImage($newFilename);
             endforeach;
-
+            
             foreach ($request->get('inputs_value') ?? [] as $index => $values):
                 foreach ($values as $key => $value):
                     if ($value !== ""):
@@ -73,6 +67,10 @@ class ChallengeController extends AbstractController
                     if ($name !== ""):
                         $tests[$index]['output'] = $name;
                     endif;
+            endforeach;
+
+            foreach ($challenge->getTests() ?? [] as $test):
+                $challenge->removeTest($test);
             endforeach;
 
             foreach ($tests ?? [] as $test):

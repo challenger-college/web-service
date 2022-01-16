@@ -17,7 +17,7 @@ class ExerciceController extends AbstractController
     public function exercice(Request $request, string $challenge_id, ?string $exercice_id = null, EntityManagerInterface $em): Response
     {
         $challenge = $em->getRepository(Challenge::class)->findOneBy(['id' => $challenge_id, 'validity' => true]);
-     
+        
         if ($exercice_id):
             $exercice = $em->getRepository(Exercice::class)->findOneBy(['id' => $exercice_id, 'challenge' => $challenge_id]);
         else: 
@@ -26,7 +26,7 @@ class ExerciceController extends AbstractController
             $exercice->setAuthor($this->getUser());
             $exercice->setCreateDate(new DateTime());
             $exercice->setValidated(false);
-            $exercice->setContent($challenge->getTemplate());
+            $exercice->setContent($challenge->getTemplate() ?? "");
             $em->persist($exercice);
             $em->flush();
         endif;

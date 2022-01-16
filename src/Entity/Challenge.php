@@ -49,7 +49,7 @@ class Challenge
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Exercice::class, orphanRemoval: true)]
     private $exercices;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 1000, nullable: true)]
     private $image;
 
     #[ORM\Column(type: 'text', nullable: true)]

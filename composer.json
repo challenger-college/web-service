@@ -19,6 +19,7 @@
         "symfony/form": "6.*",
         "symfony/framework-bundle": "6.*",
         "symfony/maker-bundle": "^1.36",
+        "symfony/mime": "6.*",
         "symfony/monolog-bundle": "^3.0",
         "symfony/proxy-manager-bridge": "6.*",
         "symfony/runtime": "6.*",
