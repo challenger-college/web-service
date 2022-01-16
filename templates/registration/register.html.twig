@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col-12">
             <div class="card m-3">
                 <div class="card-header">
-                    <h1 class="card-title">Register</h1>
+                    <h1 class="card-title">Inscription</h1>
                 </div>
                 <div class="card-body">
                     {{ form_start(registrationForm) }}
@@ -17,7 +17,10 @@
                             'attr': {'class': 'form-control'}
                         }) }}
 
-                        <button type="submit" class="btn btn-outline-primary m-3">Register</button>
+                        <button type="submit" class="btn btn-outline-primary m-3">S'inscrire</button>
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-primary m-3 text-right text-primary">
+                            Connexion
+                        </a>
                     {{ form_end(registrationForm) }}
                 </div>
             </div>

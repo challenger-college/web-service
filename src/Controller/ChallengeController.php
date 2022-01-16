@@ -12,15 +12,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ChallengeController extends AbstractController
 {
-    #[Route('/challenge', name: 'challenge')]
-    public function challenge(Request $request, EntityManagerInterface $em): Response
+    #[Route('/challenges', name: 'challenges')]
+    public function challenges(EntityManagerInterface $em): Response
     {
+        $challenges = $em->getRepository(Challenge::class)->findBy(['validity' => true], ['createDate' => 'DESC']);
+        return $this->render('challenge/challenges.html.twig', ['challenges' => $challenges]);
+    }
+
+    #[Route('/challenge/{challenge_id}', name: 'challenge')]
+    public function challenge(Request $request, ?string $challenge_id = null, EntityManagerInterface $em): Response
+    {
+        if ($challenge_id):
+            $challenge = $em->getRepository(Challenge::class)->find($challenge_id);
+        else: $challenge = new Challenge(); endif;
+
         if ($request->isMethod('POST')):
-            $challenge = new Challenge();
             $challenge->setTitle($request->get('title'));
             $challenge->setDescription($request->get('description'));
             $challenge->setConstraints($request->get('constraints'));
@@ -73,9 +82,9 @@ class ChallengeController extends AbstractController
             $em->persist($challenge);
             $em->flush();
 
-            return $this->json(['status' => 'success']);
+            return $this->redirectToRoute('challenges');
         endif;
 
-        return $this->json(['error' => 'Formulaire invalide.']);
+        return $this->render('challenge/challenge.html.twig', ['challenge' => $challenge]);
     }
 }

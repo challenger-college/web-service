@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ challenge.title }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card m-3">
+                <div class="card-header">
+                    <h1 class="card-title">{{ challenge.title }}</h1>
+                </div>
+                <form method="POST" action="{{ path('exercice', {'challenge_id': challenge.id}) }}">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Description:</label>
+                            <p>{{ challenge.description }}</p>
+                        </div>
+                        {% if challenge.constraints %}
+                            <div class="form-group">
+                                <label>Contraintes:</label>
+                                <p>{{ challenge.constraints }}</p>
+                            </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    Temps d'éxecution maximum: <strong>{{ challenge.timeout }}</strong> ms
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div id="editor"></div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-outline-success" >Soumettre</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    <script src="{{ asset('ace/ace.js') }}"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/dracula");
+        editor.session.setMode("ace/mode/python");
+    </script>
+{% endblock %}

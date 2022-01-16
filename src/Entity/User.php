@@ -33,10 +33,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Challenge::class, orphanRemoval: true)]
     private $challenges;
 
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Exercice::class, orphanRemoval: true)]
+    private $exercices;
+
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
         $this->createDate = new ArrayCollection();
+        $this->exercices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -133,6 +137,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($challenge->getAuthor() === $this) {
                 $challenge->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Exercice[]
+     */
+    public function getExercices(): Collection
+    {
+        return $this->exercices;
+    }
+
+    public function addExercice(Exercice $exercice): self
+    {
+        if (!$this->exercices->contains($exercice)) {
+            $this->exercices[] = $exercice;
+            $exercice->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExercice(Exercice $exercice): self
+    {
+        if ($this->exercices->removeElement($exercice)) {
+            // set the owning side to null (unless already changed)
+            if ($exercice->getAuthor() === $this) {
+                $exercice->setAuthor(null);
             }
         }
 

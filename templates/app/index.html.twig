@@ -1,106 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouveau challenge{% endblock %}
+{% block title %}Challenger{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col-12">
             <div class="card m-3">
                 <div class="card-header">
-                    <h1 class="card-title">New challenge</h1>
+                    <h1 class="card-title">Challenger</h1>
                 </div>
-                <form method="POST" action="{{ path('challenge') }}">
-                    <div class="card-body">
-                        <div class="form-group">
-                            <input type="text" id="title" name="title" placeholder="Titre" class="form-control required" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="description" name="description" placeholder="Description" class="form-control required" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="formFile" class="form-label">Déposer une image</label>
-                            <input class="form-control" type="file" id="image">
-                        </div>
-                        <div class="form-group">
-                            <label for="contraints">Contraintes</label>
-                            <textarea id="constraints" name="constraints" placeholder="-10^6 < args < 10^6" class="form-control"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="timeout">Temps d'éxecution maximum (ms)</label>
-                            <input type="number" id="timeout" name="timeout" value="1000" class="form-control required" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="function_name">Nom de la fonction</label>
-                            <input type="text" id="function_name" name="function_name" placeholder="function_name()" class="form-control required" required>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Input / Output</h2>
-                            </div>
-                            <div id="inputs" class="card-body">
-                                <div id="input_0" class="card inputs mb-3">
-                                    <div class="card-header">
-                                        <h5 class="card-title">Input</h5>
-                                    </div>
-                                    <div class="card-content input">
-                                        <div class="row m-2">
-                                            <div class="col-6">
-                                                <input id="input_value_0_0" name="inputs_value[0][0]" type="text" placeholder="valeur" class="form-control" required onkeyup="inputListener('0', '0')">
-                                            </div>
-                                            <div class="col-6">
-                                                <input id="input_name_0_0" name="inputs_name[0][0]" type="text" placeholder="argument_name" class="form-control" required onkeyup="inputListener('0', '0')">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-content output">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h5 class="card-title">Output</h5>
-                                            </div>
-                                            <div class="card-content">
-                                                <div class="row m-2">
-                                                    <div class="col-12">
-                                                        <input id="output_value_0" name="output[0]" type="text" placeholder="valeur" class="form-control" required onkeyup="outputListener('0', '0')">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-outline-success" >Soumettre</button>
-                        </div>
-                    </form>
+                <div class="card-body">
+                    <p>
+                        Description du projet Challenger...
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    <script>
-        function inputListener(input_id, row_id) {
-            console.log(input_id, row_id);
-            if ($("#input_"+input_id+" input#input_name_"+input_id+"_"+row_id).val() && $("#input_"+input_id+" input#input_value_"+input_id+"_"+row_id).val()) {
-                new_id = parseInt(row_id) + 1;
-                if ($("#input_"+input_id+" input#input_name_"+input_id+"_"+new_id).length < 1 && $("#input_"+input_id+" input#input_value_"+input_id+"_"+new_id).length < 1) {
-                    new_row = "<div class=\"row m-2\"><div class=\"col-6\"><input id=\"input_value_"+input_id+"_"+new_id+"\" name=\"inputs_value["+input_id+"]["+new_id+"]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"inputListener('"+input_id+"', '"+new_id+"')\"></div><div class=\"col-6\"><input id=\"input_name_"+input_id+"_"+new_id+"\" name=\"inputs_name["+input_id+"]["+new_id+"]\" type=\"text\" placeholder=\"argument_name\" class=\"form-control\" onkeyup=\"inputListener('"+input_id+"', '"+new_id+"')\"></div></div>"
-                    $('#input_'+input_id+' .card-content.input').append(new_row)
-                    outputListener(input_id);
-                }
-            }
-        }
-        function outputListener(id) {
-            if ($("#input_"+id+" input#input_name_"+id+"_0").val().length > 0 && $("#input_"+id+" input#input_value_"+id+"_0").val().length > 0) {
-                console.log('helllllo');
-                new_id = parseInt(id) + 1;
-                if ($('#input_'+new_id).length < 1) {
-                    new_row = "<div id=\"input_"+new_id+"\" class=\"card inputs mb-3\"><div class=\"card-header\"><h5 class=\"card-title\">Input</h5></div><div class=\"card-content input\"><div class=\"row m-2\"><div class=\"col-6\"><input id=\"input_value_"+new_id+"_0\" name=\"inputs_value["+new_id+"][0]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"inputListener('"+new_id+"', '0')\"></div><div class=\"col-6\"><input id=\"input_name_"+new_id+"_0\" name=\"inputs_name["+new_id+"][0]\" type=\"text\" placeholder=\"argument_name\" class=\"form-control\" onkeyup=\"inputListener('"+new_id+"', '0')\"></div></div></div><div class=\"card-content output\"><div class=\"card\"><div class=\"card-header\"><h5 class=\"card-title\">Output</h5></div><div class=\"card-content\"><div class=\"row m-2\"><div class=\"col-12\"><input id=\"output_value_"+new_id+"\" name=\"output["+new_id+"]\" type=\"text\" placeholder=\"valeur\" class=\"form-control\" onkeyup=\"outputListener('"+new_id+"')\"></div></div></div></div></div></div>"
-                    $('#inputs').append(new_row);
-                }
-            }
-        }
-    </script>
 {% endblock %}

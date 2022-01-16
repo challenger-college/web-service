@@ -45,10 +45,14 @@ class Challenge
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $validity;
 
+    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Exercice::class, orphanRemoval: true)]
+    private $exercices;
+
     public function __construct()
     {
         $this->setId(uniqid());
         $this->tests = new ArrayCollection();
+        $this->exercices = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -197,5 +201,51 @@ class Challenge
         $this->validity = $validity;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Exercice[]
+     */
+    public function getExercices(): Collection
+    {
+        return $this->exercices;
+    }
+
+    public function addExercice(Exercice $exercice): self
+    {
+        if (!$this->exercices->contains($exercice)) {
+            $this->exercices[] = $exercice;
+            $exercice->setChallenge($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExercice(Exercice $exercice): self
+    {
+        if ($this->exercices->removeElement($exercice)) {
+            // set the owning side to null (unless already changed)
+            if ($exercice->getChallenge() === $this) {
+                $exercice->setChallenge(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function array(): array {
+        foreach ($this->getTests() ?? [] as $test):
+            foreach ($test->getInputs() as $input):
+                $inputs[] = ['name' => $input->getName(), 'value' => $input->getValue()];
+            endforeach;
+            $tests[] = ['inputs' => $inputs, 'output' => $test->getOutput()->getValue()];
+        endforeach;
+        
+        return [
+            'id' => $this->getId(),
+            'function_name' => $this->getFunctionName(),
+            'timeout' => $this->getTimeout(),
+            'tests' => $tests,
+        ];    
     }
 }

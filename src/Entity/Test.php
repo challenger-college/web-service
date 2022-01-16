@@ -11,8 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Test
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'string')]
     private $id;
 
     #[ORM\OneToMany(mappedBy: 'test', targetEntity: Input::class, orphanRemoval: true)]
@@ -28,10 +27,16 @@ class Test
 
     public function __construct()
     {
+        $this->setId(uniqid());
         $this->inputs = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function setId(string $id): self {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getId(): ?string
     {
         return $this->id;
     }
