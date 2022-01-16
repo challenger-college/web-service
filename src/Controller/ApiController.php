@@ -40,7 +40,7 @@ class ApiController extends AbstractController
                 return $this->json(['error' => 'Parameter <template> not found.'], 400);
             endif;
 
-            if ($request->get('isValid') === "true"):
+            if ($request->get('isValid') === "true" || $request->get('isValid') === true):
                 $challenge->setValidity(true);
             else: $challenge->setValidity(false); endif;
 
@@ -82,7 +82,7 @@ class ApiController extends AbstractController
                 return $this->json(['error' => 'Parameter <template> not found.'], 400);
             endif;
 
-            if ($request->get('isValid') === "true"):
+            if ($request->get('isValid') === "true" || $request->get('isValid') === true):
                 $exercice->setValidated(true);
             else: $exercice->setValidated(false); endif;
             $em->persist($exercice);
