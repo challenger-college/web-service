@@ -49,6 +49,7 @@ class ChallengeController extends AbstractController
                 $challenge->setImage($newFilename);
             endforeach;
             
+            // Get tests submit in form
             foreach ($request->get('inputs_value') ?? [] as $index => $values):
                 foreach ($values as $key => $value):
                     if ($value !== ""):
@@ -69,10 +70,12 @@ class ChallengeController extends AbstractController
                     endif;
             endforeach;
 
+            // Clear old tests
             foreach ($challenge->getTests() ?? [] as $test):
                 $challenge->removeTest($test);
             endforeach;
 
+            // Construct Test object with Inputs and Output
             foreach ($tests ?? [] as $test):
                 $Test = new Test();
 

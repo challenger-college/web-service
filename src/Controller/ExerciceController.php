@@ -36,7 +36,6 @@ class ExerciceController extends AbstractController
             $exercice->setValidated(false);
             $em->persist($exercice);
             $em->flush();
-
             return $this->json(['status' => 'success', 'message' => 'Exercice submited for validation.']);
         endif;
 
