@@ -244,6 +244,7 @@ class Challenge
 
     public function array(): array {
         foreach ($this->getTests() ?? [] as $test):
+            $inputs = [];
             foreach ($test->getInputs() as $input):
                 $inputs[] = ['name' => $input->getName(), 'value' => $input->getValue()];
             endforeach;
