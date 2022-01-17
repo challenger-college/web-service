@@ -57,7 +57,7 @@ class ApiController extends AbstractController
     public function exercices(Request $request, EntityManagerInterface $em): Response {
         if ($request->get('token') === $this->getParameter('token.api')):
             foreach ($em->getRepository(Exercice::class)->findBy([], ['createDate' => 'ASC']) ?? [] as $exercice):
-                if ($exercice->getValidity() === null):
+                if ($exercice->getValidated() === null):
                     $exercices[] = [
                         'id' => $exercice->getId(),
                         'content' => $exercice->getContent(),
