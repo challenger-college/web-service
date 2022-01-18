@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Exercice;
+use App\Entity\Exercise;
 use App\Entity\Challenge;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,29 +53,29 @@ class ApiController extends AbstractController
         return $this->json(['error' => 'Fake token.'], 401);
     }
 
-    #[Route('/api/exercices', name: 'api_exercices')]
-    public function exercices(Request $request, EntityManagerInterface $em): Response {
+    #[Route('/api/exercises', name: 'api_exercises')]
+    public function exercises(Request $request, EntityManagerInterface $em): Response {
         if ($request->get('token') === $this->getParameter('token.api')):
-            foreach ($em->getRepository(Exercice::class)->findBy([], ['createDate' => 'ASC']) ?? [] as $exercice):
-                if ($exercice->getValidated() === null):
-                    $exercices[] = [
-                        'id' => $exercice->getId(),
-                        'content' => $exercice->getContent(),
-                        'challenge' => $exercice->getChallenge()->array(),
+            foreach ($em->getRepository(Exercise::class)->findBy([], ['createDate' => 'ASC']) ?? [] as $exercise):
+                if ($exercise->getValidated() === null):
+                    $exercises[] = [
+                        'id' => $exercise->getId(),
+                        'content' => $exercise->getContent(),
+                        'challenge' => $exercise->getChallenge()->array(),
                     ];
                 endif;
             endforeach;
-            return $this->json($exercices ?? [], 200);
+            return $this->json($exercises ?? [], 200);
         endif;
 
         return $this->json(['error' => 'Fake token.'], 401);
     }
 
-    #[Route('/api/exercice/{exercice_id}/check', name: 'api_exercice_check')]
-    public function exerciceCheck(Request $request, string $exercice_id, EntityManagerInterface $em): Response {
+    #[Route('/api/exercise/{exercise_id}/check', name: 'api_exercise_check')]
+    public function exerciseCheck(Request $request, string $exercise_id, EntityManagerInterface $em): Response {
         if ($request->get('token') === $this->getParameter('token.api')):
-            $exercice = $em->getRepository(Exercice::class)->find($exercice_id);
-            if (!$exercice): return $this->json(['error' => 'Exercice not found.'], 404); endif;
+            $exercise = $em->getRepository(Exercise::class)->find($exercise_id);
+            if (!$exercise): return $this->json(['error' => 'Exercise not found.'], 404); endif;
 
             if (empty($request->get('isValid'))):
                 return $this->json(['error' => 'Parameter <isValid> not found.'], 400);
@@ -85,11 +85,11 @@ class ApiController extends AbstractController
             endif;
 
             if ($request->get('isValid') === "true" || $request->get('isValid') === true):
-                $exercice->setValidated(true);
-            else: $exercice->setValidated(false); endif;
-            $em->persist($exercice);
+                $exercise->setValidated(true);
+            else: $exercise->setValidated(false); endif;
+            $em->persist($exercise);
             $em->flush();
-            return $this->json(['message' => 'This exercice was updated.'], 201);
+            return $this->json(['message' => 'This exercise was updated.'], 201);
         endif;
 
         return $this->json(['error' => 'Fake token.'], 401);

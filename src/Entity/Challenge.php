@@ -46,8 +46,8 @@ class Challenge
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $validity;
 
-    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Exercice::class, orphanRemoval: true)]
-    private $exercices;
+    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Exercise::class, orphanRemoval: true)]
+    private $exercises;
 
     #[ORM\Column(type: 'string', length: 1000, nullable: true)]
     private $image;
@@ -60,7 +60,7 @@ class Challenge
         $this->setId(uniqid());
         $this->setCreateDate(new DateTime());
         $this->tests = new ArrayCollection();
-        $this->exercices = new ArrayCollection();
+        $this->exercises = new ArrayCollection();
     }
 
     public function getId(): ?string
@@ -212,29 +212,29 @@ class Challenge
     }
 
     /**
-     * @return Collection|Exercice[]
+     * @return Collection|Exercise[]
      */
-    public function getExercices(): Collection
+    public function getExercises(): Collection
     {
-        return $this->exercices;
+        return $this->exercises;
     }
 
-    public function addExercice(Exercice $exercice): self
+    public function addExercise(Exercise $exercise): self
     {
-        if (!$this->exercices->contains($exercice)) {
-            $this->exercices[] = $exercice;
-            $exercice->setChallenge($this);
+        if (!$this->exercises->contains($exercise)) {
+            $this->exercises[] = $exercise;
+            $exercise->setChallenge($this);
         }
 
         return $this;
     }
 
-    public function removeExercice(Exercice $exercice): self
+    public function removeExercise(Exercise $exercise): self
     {
-        if ($this->exercices->removeElement($exercice)) {
+        if ($this->exercises->removeElement($exercise)) {
             // set the owning side to null (unless already changed)
-            if ($exercice->getChallenge() === $this) {
-                $exercice->setChallenge(null);
+            if ($exercise->getChallenge() === $this) {
+                $exercise->setChallenge(null);
             }
         }
 

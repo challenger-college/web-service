@@ -34,7 +34,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div id="editor">{{ exercice.content ?? challenge.template }}</div>
+                        <div id="editor">{{ exercise.content ?? challenge.template }}</div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -56,7 +56,7 @@
 
     <script>
         function submit() {
-            var url = "{{ path('exercice', {'challenge_id': challenge.id, 'exercice_id': exercice.id}) }}";
+            var url = "{{ path('exercise', {'challenge_id': challenge.id, 'exercise_id': exercise.id}) }}";
             $.post(url, {content: editor.getSession().getValue()}, function (data) {
                 if (data.status === "success") {
                     window.location.href = url;

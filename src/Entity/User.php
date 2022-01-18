@@ -33,14 +33,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Challenge::class, orphanRemoval: true)]
     private $challenges;
 
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Exercice::class, orphanRemoval: true)]
-    private $exercices;
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Exercise::class, orphanRemoval: true)]
+    private $exercises;
 
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
         $this->createDate = new ArrayCollection();
-        $this->exercices = new ArrayCollection();
+        $this->exercises = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -144,29 +144,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Exercice[]
+     * @return Collection|Exercise[]
      */
-    public function getExercices(): Collection
+    public function getExercises(): Collection
     {
-        return $this->exercices;
+        return $this->exercises;
     }
 
-    public function addExercice(Exercice $exercice): self
+    public function addExercise(Exercise $exercise): self
     {
-        if (!$this->exercices->contains($exercice)) {
-            $this->exercices[] = $exercice;
-            $exercice->setAuthor($this);
+        if (!$this->exercises->contains($exercise)) {
+            $this->exercises[] = $exercise;
+            $exercise->setAuthor($this);
         }
 
         return $this;
     }
 
-    public function removeExercice(Exercice $exercice): self
+    public function removeExercise(Exercise $exercise): self
     {
-        if ($this->exercices->removeElement($exercice)) {
+        if ($this->exercises->removeElement($exercise)) {
             // set the owning side to null (unless already changed)
-            if ($exercice->getAuthor() === $this) {
-                $exercice->setAuthor(null);
+            if ($exercise->getAuthor() === $this) {
+                $exercise->setAuthor(null);
             }
         }
 
