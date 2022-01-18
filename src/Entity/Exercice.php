@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ExerciceRepository;
+use App\Repository\ExerciseRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ExerciceRepository::class)]
-class Exercice
+#[ORM\Entity(repositoryClass: ExerciseRepository::class)]
+class Exercise
 {
     #[ORM\Id]
     #[ORM\Column(type: 'string')]
@@ -18,11 +18,11 @@ class Exercice
     #[ORM\Column(type: 'datetime')]
     private $createDate;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'exercices')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'exercises')]
     #[ORM\JoinColumn(nullable: false)]
     private $author;
 
-    #[ORM\ManyToOne(targetEntity: Challenge::class, inversedBy: 'exercices')]
+    #[ORM\ManyToOne(targetEntity: Challenge::class, inversedBy: 'exercises')]
     #[ORM\JoinColumn(nullable: false)]
     private $challenge;
 
