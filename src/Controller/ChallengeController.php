@@ -108,4 +108,14 @@ class ChallengeController extends AbstractController
 
         return $this->render('challenge/challenge.html.twig', ['challenge' => $challenge]);
     }
+
+    #[Route('/challenge/{challenge_id}/delete', name: 'challenge_delete')]
+    public function delete(string $challenge_id, EntityManagerInterface $em): Response
+    {
+        $challenge = $em->getRepository(Challenge::class)->find($challenge_id);
+        $em->remove($challenge);
+        $em->flush();
+        return $this->redirectToRoute('challenges');
+    }
+
 }

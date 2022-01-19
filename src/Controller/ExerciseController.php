@@ -13,6 +13,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ExerciseController extends AbstractController
 {
+    #[Route('/exercises', name: 'exercises')]
+    public function exercises(EntityManagerInterface $em): Response
+    {
+        $exercises = $em->getRepository(Exercise::class)->findBy(['user' => $this->getUser()]);
+        return $this->render('app/exercises.html.twig', ['exercises' => $exercises]);
+    }
+
     #[Route('/exercise/{challenge_id}/{exercise_id}', name: 'exercise', defaults: ["exercise_id" => null])]
     public function exercise(Request $request, EntityManagerInterface $em, string $challenge_id, ?string $exercise_id = null): Response
     {
@@ -41,5 +48,14 @@ class ExerciseController extends AbstractController
 
 
         return $this->render('exercise/exercise.html.twig', ['challenge' => $challenge, 'exercise' => $exercise]);
+    }
+
+    #[Route('/exercise/{exercise_id}/delete', name: 'exercise_delete')]
+    public function delete(string $exercise_id, EntityManagerInterface $em): Response
+    {
+        $exercise = $em->getRepository(Exercise::class)->find($exercise_id);
+        $em->remove($exercise);
+        $em->flush();
+        return $this->redirectToRoute('exercises');
     }
 }

@@ -34,6 +34,9 @@
                                             {% endif %}
                                             
                                             {% if challenge.author == app.user %}
+                                                <a href="{{ path('challenge_delete', {'challenge_id': challenge.id}) }}" class="btn btn-danger float-right m-3">
+                                                    Supprimer le challenge
+                                                </a>
                                                 <a href="{{ path('challenge', {'challenge_id': challenge.id}) }}" class="btn btn-primary float-right m-3">
                                                     Modifier le challenge
                                                 </a>
