@@ -101,7 +101,7 @@ class ApiController extends AbstractController
     #[Route('/api/exercise/{exercise_id}/result', name: 'api_exercice_result')]
     public function exerciseResult(string $exercise_id, Request $request, EntityManagerInterface $em): JsonResponse {
         if ($request->get('token') === $this->getParameter('token.api')):
-            $exercise = $em->getRepository(Exercise::class)->findOneBy(['id' => $exercise_id, 'isValidated' => true]);
+            $exercise = $em->getRepository(Exercise::class)->findOneBy(['id' => $exercise_id, 'validated' => true]);
             if (!$exercise): return $this->json(['error' => 'Exercise not found.'], 404); endif;
             $result = new Result();
             $result->setTime($request->get('time'));
@@ -117,5 +117,7 @@ class ApiController extends AbstractController
 
             return $this->json([$result->array()], 200);
         endif;
+
+        return $this->json(['error' => 'Fake token.'], 401);
     }
 }

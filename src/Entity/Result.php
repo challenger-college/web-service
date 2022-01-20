@@ -113,13 +113,15 @@ class Result
     }
 
     public function array(): array {
+        foreach ($this->getErrors() ?? [] as $error):
+            $errors[] = $error;
+        endforeach;
+
         return [
             'id' => $this->getId(),
             'time' => $this->getTime(),
             'createDate' => $this->getCreateDate(),
-            'errors' => array_map(function (Error $error) {
-                return $error['message'];
-            }, (array) $this->getErrors())
+            'errors' => $errors ?? []
         ];
     }
 }
