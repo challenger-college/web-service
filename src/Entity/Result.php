@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Entity;
+
+use DateTime;
+use App\Repository\ResultRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: ResultRepository::class)]
+class Result
+{
+    #[ORM\Id]
+    #[ORM\Column(type: 'string')]
+    private $id;
+
+    #[ORM\ManyToOne(targetEntity: Exercise::class, inversedBy: 'results')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $exercice;
+
+    #[ORM\Column(type: 'integer')]
+    private $time;
+
+    #[ORM\Column(type: 'datetime')]
+    private $createDate;
+
+    #[ORM\OneToMany(mappedBy: 'result', targetEntity: Error::class, orphanRemoval: true)]
+    private $errors;
+
+    public function __construct()
+    {
+        $this->setId(uniqid());
+        $this->setCreateDate(new DateTime());
+        $this->errors = new ArrayCollection();
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function setId(string $id): self 
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function getExercice(): ?Exercise
+    {
+        return $this->exercice;
+    }
+
+    public function setExercice(?Exercise $exercice): self
+    {
+        $this->exercice = $exercice;
+
+        return $this;
+    }
+
+    public function getTime(): ?int
+    {
+        return $this->time;
+    }
+
+    public function setTime(int $time): self
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
+    public function getCreateDate(): ?\DateTime
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate(\DateTime $createDate): self
+    {
+        $this->createDate = $createDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Error[]
+     */
+    public function getErrors(): Collection
+    {
+        return $this->errors;
+    }
+
+    public function addError(Error $error): self
+    {
+        if (!$this->errors->contains($error)) {
+            $this->errors[] = $error;
+            $error->setResult($this);
+        }
+
+        return $this;
+    }
+
+    public function removeError(Error $error): self
+    {
+        if ($this->errors->removeElement($error)) {
+            // set the owning side to null (unless already changed)
+            if ($error->getResult() === $this) {
+                $error->setResult(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function array(): array {
+        return [
+            'id' => $this->getId(),
+            'time' => $this->getTime(),
+            'createDate' => $this->getCreateDate(),
+            'errors' => array_map(function (Error $error) {
+                return $error['message'];
+            }, (array) $this->getErrors())
+        ];
+    }
+}
