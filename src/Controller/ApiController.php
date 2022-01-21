@@ -8,7 +8,6 @@ use App\Entity\Exercise;
 use App\Entity\Challenge;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -82,9 +81,6 @@ class ApiController extends AbstractController
 
             if (empty($request->get('isValid'))):
                 return $this->json(['error' => 'Parameter <isValid> not found.'], 400);
-            endif;
-            if (empty($request->get('template'))):
-                return $this->json(['error' => 'Parameter <template> not found.'], 400);
             endif;
 
             if ($request->get('isValid') === "true" || $request->get('isValid') === true):
