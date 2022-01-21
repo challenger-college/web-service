@@ -122,7 +122,7 @@ class ApiController extends AbstractController
             } else {
                 $exercise->setValidated(false);
                 $error = new Error();
-                $error->setMessage($request->get('error'))->setResult($result);
+                $error->setMessage($request->get('error') ?? "")->setResult($result);
                 $em->persist($error);
                 $em->flush();
             }
