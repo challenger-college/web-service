@@ -65,15 +65,18 @@
     <script>
         function submit() {
             $.post("{{ path('api_exercise_submit', {'challenge_id': challenge.id, 'exercise_id': exercise.id}) }}", {content: editor.getSession().getValue()}, function (data, status) {
-                $("button#submit").attr('loading')
+                $("button#submit").attr('loading', 'true');
                 if (status === "success") {
                     setInterval(() => {
-                        $.get("{{ path('api_exercise_result', {'exercise_id': exercise.id}) }}", function (data) {
-                            console.log(data);
-                        });
+                        if ($("button#submit").attr('loading') === "false")
+                            $.get("{{ path('api_exercise_result', {'exercise_id': exercise.id}) }}", function (data) {
+                                console.log(data);
+                                $("button#submit").attr('loading', 'false');
+                            });
                     }, 5000);
                 } else {
                     console.log("Fail", data);
+                    $("button#submit").attr('loading', 'false');
                 }
             });
         }

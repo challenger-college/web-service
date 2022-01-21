@@ -19,7 +19,7 @@ class Result
     #[ORM\JoinColumn(nullable: false)]
     private $exercise;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $time;
 
     #[ORM\Column(type: 'datetime')]
@@ -67,7 +67,7 @@ class Result
         return $this->time;
     }
 
-    public function setTime(int $time): self
+    public function setTime(?int $time): self
     {
         $this->time = $time;
 
