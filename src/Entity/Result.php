@@ -28,6 +28,9 @@ class Result
     #[ORM\OneToMany(mappedBy: 'result', targetEntity: Error::class, orphanRemoval: true)]
     private $errors;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $output;
+
     public function __construct()
     {
         $this->setId(uniqid());
@@ -125,5 +128,17 @@ class Result
             'createDate' => $this->getCreateDate(),
             'errors' => $errors ?? [],
         ];
+    }
+
+    public function getOutput(): ?string
+    {
+        return $this->output;
+    }
+
+    public function setOutput(?string $output): self
+    {
+        $this->output = $output;
+
+        return $this;
     }
 }

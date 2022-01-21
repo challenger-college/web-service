@@ -64,18 +64,18 @@
 
     <script>
         function submit() {
-            $.post("{{ path('api_exercise_submit', {'challenge_id': challenge.id, 'exercise_id': exercise.id}) }}", {content: editor.getSession().getValue()}, function (data) {
-                if (data.status === "success") {
+            $.post("{{ path('api_exercise_submit', {'challenge_id': challenge.id, 'exercise_id': exercise.id}) }}", {content: editor.getSession().getValue()}, function (data, status) {
+                console.log(status)
+                if (status === "success") {
                     setInterval(() => {
-                        $.post("{{ path('api_exercise_result', {'exercise_id': exercise.id}) }}", function (data) {
+                        $.get("{{ path('api_exercise_result', {'exercise_id': exercise.id}) }}", function (data) {
                             console.log(data);
                         });
-                    }, 10000);
+                    }, 5000);
+                } else {
+                    console.log("Fail", data);
                 }
             });
-        }
-
-        function result() {
         }
     </script>
 {% endblock %}

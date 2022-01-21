@@ -25,7 +25,7 @@ class ApiController extends AbstractController
                 }
             }
 
-            return $this->json($challenges ?? [], 200);
+            return $this->json($challenges ?? [], Response::HTTP_OK);
         }
 
         return $this->json(['error' => 'Fake token.'], Response::HTTP_UNAUTHORIZED);
@@ -115,11 +115,26 @@ class ApiController extends AbstractController
                 return $this->json(['error' => 'Parameter <isValid> not found.'], Response::HTTP_BAD_REQUEST);
             }
 
+            $result = new Result();
+
             if ('true' === $request->get('isValid') || true === $request->get('isValid')) {
                 $exercise->setValidated(true);
             } else {
                 $exercise->setValidated(false);
+                $error = new Error();
+                $error->setMessage($request->get('error'))->setResult($result);
+                $em->persist($error);
+                $em->flush();
             }
+
+            $result
+                ->setExercise($exercise)
+                ->setTime($request->get('time'))
+                ->setOutput($request->get('output'));
+                
+            $em->persist($result);
+            $em->flush();
+
             $em->persist($exercise);
             $em->flush();
 
@@ -151,8 +166,18 @@ class ApiController extends AbstractController
 
             return $this->json([$result->array()], Response::HTTP_OK);
         } elseif ($request->isMethod('GET')) {
+            $exercise = $em->getRepository(Exercise::class)->findOneBy(['id' => $exercise_id, 'author' => $this->getUser()]);
+            if (!$exercise) {
+                return $this->json(['error' => 'Exercise not found.'], Response::HTTP_NOT_FOUND);
+            } elseif (!$exercise->getResults()->first()) {
+                return $this->json(['error' => 'Result not found.'], Response::HTTP_NOT_FOUND);
+            }
+            dd($exercise->getResults()->first());
+            return $this->json([$exercise->getResults()->first()->array()], Response::HTTP_ACCEPTED);
+        } elseif (!$this->getUser()) {
+            return $this->json(['error' => 'You need to be connected.'], Response::HTTP_UNAUTHORIZED);
         }
 
-        return $this->json(['error' => 'Fake token.'], Response::HTTP_UNAUTHORIZED);
+        return $this->json(['error' => 'Forbidden.'], Response::HTTP_FORBIDDEN);
     }
 }
