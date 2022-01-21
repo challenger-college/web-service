@@ -12,7 +12,7 @@ class Error
     #[ORM\Column(type: 'string')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Result::class, inversedBy: 'errors')]
+    #[ORM\ManyToOne(targetEntity: Result::class, inversedBy: 'errors', cascade: ["persist"])]
     #[ORM\JoinColumn(nullable: false)]
     private $result;
 
