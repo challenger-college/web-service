@@ -31,7 +31,7 @@ class Exercise
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $validated;
 
-    #[ORM\OneToMany(mappedBy: 'exercice', targetEntity: Result::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'exercise', targetEntity: Result::class, orphanRemoval: true)]
     private $results;
 
     public function __construct()
@@ -40,8 +40,10 @@ class Exercise
         $this->results = new ArrayCollection();
     }
 
-    public function setId(string $id): self {
+    public function setId(string $id): self
+    {
         $this->id = $id;
+
         return $this;
     }
 
@@ -122,7 +124,7 @@ class Exercise
     {
         if (!$this->results->contains($result)) {
             $this->results[] = $result;
-            $result->setExercice($this);
+            $result->setExercise($this);
         }
 
         return $this;
@@ -132,8 +134,8 @@ class Exercise
     {
         if ($this->results->removeElement($result)) {
             // set the owning side to null (unless already changed)
-            if ($result->getExercice() === $this) {
-                $result->setExercice(null);
+            if ($result->getExercise() === $this) {
+                $result->setExercise(null);
             }
         }
 

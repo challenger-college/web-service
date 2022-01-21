@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use DateTime;
 use App\Repository\ResultRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,7 +17,7 @@ class Result
 
     #[ORM\ManyToOne(targetEntity: Exercise::class, inversedBy: 'results')]
     #[ORM\JoinColumn(nullable: false)]
-    private $exercice;
+    private $exercise;
 
     #[ORM\Column(type: 'integer')]
     private $time;
@@ -40,20 +40,21 @@ class Result
         return $this->id;
     }
 
-    public function setId(string $id): self 
+    public function setId(string $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 
-    public function getExercice(): ?Exercise
+    public function getExercise(): ?Exercise
     {
-        return $this->exercice;
+        return $this->exercise;
     }
 
-    public function setExercice(?Exercise $exercice): self
+    public function setExercise(?Exercise $exercise): self
     {
-        $this->exercice = $exercice;
+        $this->exercise = $exercise;
 
         return $this;
     }
@@ -70,12 +71,12 @@ class Result
         return $this;
     }
 
-    public function getCreateDate(): ?\DateTime
+    public function getCreateDate(): ?DateTime
     {
         return $this->createDate;
     }
 
-    public function setCreateDate(\DateTime $createDate): self
+    public function setCreateDate(DateTime $createDate): self
     {
         $this->createDate = $createDate;
 
@@ -112,16 +113,17 @@ class Result
         return $this;
     }
 
-    public function array(): array {
-        foreach ($this->getErrors() ?? [] as $error):
+    public function array(): array
+    {
+        foreach ($this->getErrors() ?? [] as $error) {
             $errors[] = $error;
-        endforeach;
+        }
 
         return [
             'id' => $this->getId(),
             'time' => $this->getTime(),
             'createDate' => $this->getCreateDate(),
-            'errors' => $errors ?? []
+            'errors' => $errors ?? [],
         ];
     }
 }
