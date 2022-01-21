@@ -66,12 +66,11 @@
         function submit() {
             $.post("{{ path('api_exercise_submit', {'challenge_id': challenge.id, 'exercise_id': exercise.id}) }}", {content: editor.getSession().getValue()}, function (data, status) {
                 if (status === "success") {
-                    console.log('success')
+                    console.log('Exercise submited, wait exercise result response.')
                     setInterval(() => {
                         if ($("button#submit").attr('loading') === "false") {
                             console.log('Onload')
                             $.get("{{ path('api_exercise_result', {'exercise_id': exercise.id}) }}", function (result) {
-                                console.log('result response')
                                 console.log(result);
                                 $("button#submit").attr('loading', 'false');
                             });
