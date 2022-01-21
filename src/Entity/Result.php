@@ -124,6 +124,7 @@ class Result
 
         return [
             'id' => $this->getId(),
+            'output' => $this->getOutput(),
             'time' => $this->getTime(),
             'createDate' => $this->getCreateDate(),
             'errors' => $errors ?? [],

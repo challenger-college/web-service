@@ -151,6 +151,7 @@ class ApiController extends AbstractController
                 return $this->json(['error' => 'Exercise not found.'], Response::HTTP_NOT_FOUND);
             }
             $result = new Result();
+            $result->setOutput($request->get('output'));
             $result->setTime($request->get('time'));
             $result->setExercise($exercise);
             foreach ($request->get('errors') ?? [] as $message) {
@@ -170,8 +171,8 @@ class ApiController extends AbstractController
             } elseif (!$exercise->getResults()->first()) {
                 return $this->json(['error' => 'Result not found.'], Response::HTTP_NOT_FOUND);
             }
-            dd($exercise->getResults()->first());
-            return $this->json([$exercise->getResults()->first()->array()], Response::HTTP_ACCEPTED);
+
+            return $this->json([$exercise->getResults()?->first()->array()], Response::HTTP_ACCEPTED);
         } elseif (!$this->getUser()) {
             return $this->json(['error' => 'You need to be connected.'], Response::HTTP_UNAUTHORIZED);
         }
