@@ -64,6 +64,8 @@
 
     <script>
         function submit() {
+            $("button#submit").attr('disabled', 'true');
+            $("button#submit").addClass('disabled');
             $.post("{{ path('api_exercise_submit', {'challenge_id': challenge.id, 'exercise_id': exercise.id}) }}", {content: editor.getSession().getValue()}, function (data, status) {
                 if (status === "success") {
                     console.log('Exercise submited, wait exercise result response.')
@@ -75,15 +77,18 @@
                             $.get(url, function (result) {
                                 console.log(result, result.output);
                                 $("button#submit").attr('loading', 'false');
+                                $("button#submit").attr('disabled', 'false');
+                                $("button#submit").removeClass('disabled');
                             });
                         } else {
                             console.log('Onload')
-                        }
-                        $("button#submit").attr('loading', 'true');
+                        }                        
                     }, 5000);
                 } else {
                     console.log("Fail exercise submission");
                     $("button#submit").attr('loading', 'false');
+                    $("button#submit").attr('disabled', 'false');
+                    $("button#submit").removeClass('disabled');
                 }
             });
         }
