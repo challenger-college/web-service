@@ -70,8 +70,10 @@
                     setInterval(() => {
                         if ($("button#submit").attr('loading') === "false") {
                             console.log('Onload')
-                            $.get("{{ path('api_exercise_result', {'exercise_id': exercise.id}) }}", function (result) {
-                                console.log(result);
+                            let url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id': }) }}";
+                            url.replace('result_id', data.id);
+                            $.get(url, function (result) {
+                                console.log(result, result.output);
                                 $("button#submit").attr('loading', 'false');
                             });
                         } else {
