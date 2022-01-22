@@ -171,11 +171,13 @@ class ApiController extends AbstractController
             }
 
             $result = $em->getRepository(Result::class)->findOneBy(['id' => $result_id, 'exercise' => $exercise]);
+            dd($result);
             if (!$result) {
                 $result = new Result();
                 $result->setOutput('Your exercise submission is in queue list.');
                 return $this->json($result->array(), Response::HTTP_PARTIAL_CONTENT);
             }
+
             return $this->json([$result->array()], Response::HTTP_ACCEPTED);
         } elseif (!$this->getUser()) {
             return $this->json(['error' => 'You need to be connected.'], Response::HTTP_UNAUTHORIZED);
