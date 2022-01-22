@@ -142,8 +142,8 @@ class ApiController extends AbstractController
         return $this->json(['error' => 'Fake token.'], Response::HTTP_UNAUTHORIZED);
     }
 
-    #[Route('/api/exercise/{exercise_id}/result', name: 'api_exercise_result')]
-    public function exerciseResult(string $exercise_id, Request $request, EntityManagerInterface $em): JsonResponse
+    #[Route('/api/exercise/{exercise_id}/result/{result_id}', name: 'api_exercise_result')]
+    public function exerciseResult(string $exercise_id, ?string $result_id = null, Request $request, EntityManagerInterface $em): JsonResponse
     {
         if ($request->isMethod('POST') && $request->get('token') === $this->getParameter('token.api')) {
             $exercise = $em->getRepository(Exercise::class)->findOneBy(['id' => $exercise_id, 'validated' => true]);
@@ -164,15 +164,19 @@ class ApiController extends AbstractController
             $em->flush();
 
             return $this->json([$result->array()], Response::HTTP_OK);
-        } elseif ($request->isMethod('GET')) {
+        } elseif ($request->isMethod('GET') && $result_id) {
             $exercise = $em->getRepository(Exercise::class)->findOneBy(['id' => $exercise_id, 'author' => $this->getUser()]);
             if (!$exercise) {
                 return $this->json(['error' => 'Exercise not found.'], Response::HTTP_NOT_FOUND);
-            } elseif (!$exercise->getResults()->first()) {
-                return $this->json(['error' => 'Result not found.'], Response::HTTP_NOT_FOUND);
             }
 
-            return $this->json([$exercise->getResults()?->first()->array()], Response::HTTP_ACCEPTED);
+            $result = $em->getRepository(Result::class)->findOneBy(['id' => $result_id, 'exercise' => $exercise]);
+            if (!$result) {
+                $result = new Result();
+                $result->setOutput('Your exercise submission is in queue list.');
+                return $this->json($result->array(), Response::HTTP_PARTIAL_CONTENT);
+            }
+            return $this->json([$result->array()], Response::HTTP_ACCEPTED);
         } elseif (!$this->getUser()) {
             return $this->json(['error' => 'You need to be connected.'], Response::HTTP_UNAUTHORIZED);
         }
