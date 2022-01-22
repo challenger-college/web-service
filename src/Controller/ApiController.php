@@ -142,7 +142,7 @@ class ApiController extends AbstractController
         return $this->json(['error' => 'Fake token.'], Response::HTTP_UNAUTHORIZED);
     }
 
-    #[Route('/api/exercise/{exercise_id}/result/{result_id}', name: 'api_exercise_result')]
+    #[Route('/api/exercise/{exercise_id}/result/{result_id}', name: 'api_exercise_result', defaults: ['result_id' => null])]
     public function exerciseResult(string $exercise_id, ?string $result_id = null, Request $request, EntityManagerInterface $em): JsonResponse
     {
         if ($request->isMethod('POST') && $request->get('token') === $this->getParameter('token.api')) {

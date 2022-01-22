@@ -70,7 +70,7 @@
                     setInterval(() => {
                         if ($("button#submit").attr('loading') === "false") {
                             console.log('Onload')
-                            let url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id': }) }}";
+                            let url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id' }) }}";
                             url.replace('result_id', data.id);
                             $.get(url, function (result) {
                                 console.log(result, result.output);
