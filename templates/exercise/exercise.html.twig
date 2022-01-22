@@ -73,7 +73,7 @@
                         if ($("button#submit").attr('loading') === "false") {
                             console.log('Onload')
                             let url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id' }) }}";
-                            url.replace('result_id', data.id);
+                            url = url.replace('result_id', data.id);
                             $.get(url, function (result, status, xhr) {
                                 console.log(result, result.output);
                                 if (xhr.status === 200) {
@@ -83,9 +83,7 @@
                                     clearInterval(interval);
                                 }
                             });
-                        } else {
-                            console.log('Onload')
-                        }                        
+                        }                      
                     }, 5000);
                 } else {
                     console.log("Fail exercise submission");
