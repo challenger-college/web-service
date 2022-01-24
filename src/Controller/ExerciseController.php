@@ -36,23 +36,15 @@ class ExerciseController extends AbstractController
             return new Response(new Error('Challenge need to been re-validated.'), Response::HTTP_FAILED_DEPENDENCY);
         }
 
-        if ($exercise_id) {
-            $exercise = $em->getRepository(Exercise::class)
-                ->findOneBy([
-                    'author' => $this->getUser(),
-                    'challenge' => $challenge,
-                    'exercise' => $exercise_id,
-                ]
-            );
-        } elseif ($session->get('challenge_id') === $challenge && $session->get('exercise_id')) {
-            $exercise = $em->getRepository(Exercise::class)
-                ->findOneBy([
-                    'author' => $this->getUser(),
-                    'challenge' => $challenge,
-                    'id' => $session->get('exercise_id'),
-                ]
-            );
-        } else {
+        $exercise = $em->getRepository(Exercise::class)
+            ->findOneBy([
+                'author' => $this->getUser(),
+                'challenge' => $challenge,
+                'exercise' => $exercise_id,
+            ]
+        );
+
+        if (!$exercise) {
             $exercise = new Exercise();
             $exercise
                 ->setChallenge($challenge)
@@ -64,13 +56,8 @@ class ExerciseController extends AbstractController
             $em->flush();
         }
 
-        if (!$exercise) {
-            return new Response(new Error('Exercice not found.'), Response::HTTP_NOT_FOUND);
-        }
-
         $session->set('challenge_id', $challenge->getId());
         $session->set('exercise_id', $exercise->getId());
-        $session->set('result_id', $exercise->getResults()->last()->getId());
 
         return $this->render('exercise/exercise.html.twig', ['challenge' => $challenge, 'exercise' => $exercise]);
     }

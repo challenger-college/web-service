@@ -38,12 +38,16 @@ class Exercise
     #[ORM\Column(type: 'datetime')]
     private $updateDate;
 
+    #[ORM\Column(type: 'boolean')]
+    private $onLoad;
+
     public function __construct()
     {
         $this->setId(uniqid());
         $this->setCreateDate($datetime = new DateTime());
         $this->setUpdateDate($datetime);
-        $this->results = new ArrayCollection([(new Result())->setExercise($this)]);
+        $this->setOnLoad(false);
+        $this->results = new ArrayCollection();
     }
 
     public function setId(string $id): self
@@ -176,5 +180,17 @@ class Exercise
             'createDate' => $this->getCreateDate(),
             'updateDate' => $this->getUpdateDate(),
         ];
+    }
+
+    public function getOnLoad(): ?bool
+    {
+        return $this->onLoad;
+    }
+
+    public function setOnLoad(bool $onLoad): self
+    {
+        $this->onLoad = $onLoad;
+
+        return $this;
     }
 }

@@ -36,10 +36,9 @@ class InternalApi extends AbstractController
         $exercise->setContent($request->get('content') ?? '');
         $exercise->setValidated(null);
         $exercise->setUpdateDate(new DateTime());
-        if (!$exercise->getResults()->last()->getOutput() && !$exercise->getResults()->last()->getErrors()) {
-            $exercise->addResult((new Result())->setExercise($exercise));
-        }
-
+        $exercise->addResult((new Result())->setExercise($exercise));
+        $exercise->setOnLoad(true);
+        
         $em->persist($exercise);
         $em->flush();
 

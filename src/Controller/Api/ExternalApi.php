@@ -68,7 +68,7 @@ class ExternalApi extends AbstractController
     {
         if ($request->get('token') === $this->getParameter('token.api')) {
             foreach ($em->getRepository(Exercise::class)->findBy([], ['createDate' => 'ASC']) ?? [] as $exercise) {
-                if (null === $exercise->getValidated()) {
+                if (null === $exercise->getValidated() && $exercise->getOnload()) {
                     $exercises[] = $exercise->array();
                 }
             }
@@ -114,6 +114,8 @@ class ExternalApi extends AbstractController
                     $error->setMessage($message)->setResult($result);
                 }
             }
+
+            $exercise->setOnload(false);
 
             $em->persist($result);
             $em->flush();
