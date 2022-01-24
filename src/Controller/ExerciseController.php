@@ -4,12 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Challenge;
 use App\Entity\Exercise;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Error\Error;
 
 class ExerciseController extends AbstractController
 {
@@ -21,23 +22,55 @@ class ExerciseController extends AbstractController
         return $this->render('app/exercises.html.twig', ['exercises' => $exercises]);
     }
 
+    /**
+     * @todo Check if User is connected
+     */
     #[Route('/exercise/{challenge_id}/{exercise_id}', name: 'exercise', defaults: ['exercise_id' => null])]
-    public function exercise(Request $request, EntityManagerInterface $em, string $challenge_id, ?string $exercise_id = null): Response
+    public function exercise(Request $request, Session $session, string $challenge_id, ?string $exercise_id = null, EntityManagerInterface $em): Response
     {
-        $challenge = $em->getRepository(Challenge::class)->findOneBy(['id' => $challenge_id, 'validity' => true]);
+        $challenge = $em->getRepository(Challenge::class)->find($challenge_id);
+
+        if (!$challenge) {
+            return new Response(new Error('Challenge not found.'), Response::HTTP_NOT_FOUND);
+        } elseif (!$challenge->getValidity()) {
+            return new Response(new Error('Challenge need to been re-validated.'), Response::HTTP_FAILED_DEPENDENCY);
+        }
 
         if ($exercise_id) {
-            $exercise = $em->getRepository(Exercise::class)->findOneBy(['id' => $exercise_id, 'challenge' => $challenge_id]);
+            $exercise = $em->getRepository(Exercise::class)
+                ->findOneBy([
+                    'author' => $this->getUser(),
+                    'challenge' => $challenge,
+                    'exercise' => $exercise_id,
+                ]
+            );
+        } elseif ($session->get('challenge_id') === $challenge && $session->get('exercise_id')) {
+            $exercise = $em->getRepository(Exercise::class)
+                ->findOneBy([
+                    'author' => $this->getUser(),
+                    'challenge' => $challenge,
+                    'id' => $session->get('exercise_id'),
+                ]
+            );
         } else {
             $exercise = new Exercise();
-            $exercise->setChallenge($challenge);
-            $exercise->setAuthor($this->getUser());
-            $exercise->setCreateDate(new DateTime());
-            $exercise->setValidated(null);
-            $exercise->setContent($challenge->getTemplate() ?? '');
+            $exercise
+                ->setChallenge($challenge)
+                ->setAuthor($this->getUser())
+                ->setValidated(null)
+                ->setContent($challenge->getTemplate() ?? '');
+
             $em->persist($exercise);
             $em->flush();
         }
+
+        if (!$exercise) {
+            return new Response(new Error('Exercice not found.'), Response::HTTP_NOT_FOUND);
+        }
+
+        $session->set('challenge_id', $challenge->getId());
+        $session->set('exercise_id', $exercise->getId());
+        $session->set('result_id', $exercise->getResults()->last()->getId());
 
         return $this->render('exercise/exercise.html.twig', ['challenge' => $challenge, 'exercise' => $exercise]);
     }

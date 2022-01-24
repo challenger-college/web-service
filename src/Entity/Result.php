@@ -15,15 +15,12 @@ class Result
     #[ORM\Column(type: 'string')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Exercise::class, inversedBy: 'results')]
+    #[ORM\ManyToOne(targetEntity: Exercise::class, inversedBy: 'results', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private $exercise;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private $time;
-
-    #[ORM\Column(type: 'datetime')]
-    private $createDate;
 
     #[ORM\OneToMany(mappedBy: 'result', targetEntity: Error::class, orphanRemoval: true)]
     private $errors;
@@ -31,10 +28,17 @@ class Result
     #[ORM\Column(type: 'text', nullable: true)]
     private $output;
 
+    #[ORM\Column(type: 'datetime')]
+    private $createDate;
+
+    #[ORM\Column(type: 'datetime')]
+    private $updateDate;
+
     public function __construct()
     {
         $this->setId(uniqid());
-        $this->setCreateDate(new DateTime());
+        $this->setCreateDate($datetime = new DateTime());
+        $this->setUpdateDate($datetime);
         $this->errors = new ArrayCollection();
     }
 
@@ -74,18 +78,6 @@ class Result
         return $this;
     }
 
-    public function getCreateDate(): ?DateTime
-    {
-        return $this->createDate;
-    }
-
-    public function setCreateDate(DateTime $createDate): self
-    {
-        $this->createDate = $createDate;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Error[]
      */
@@ -116,21 +108,6 @@ class Result
         return $this;
     }
 
-    public function array(): array
-    {
-        foreach ($this->getErrors() ?? [] as $error) {
-            $errors[] = $error;
-        }
-
-        return [
-            'id' => $this->getId(),
-            'output' => $this->getOutput(),
-            'time' => $this->getTime(),
-            'createDate' => $this->getCreateDate(),
-            'errors' => $errors ?? [],
-        ];
-    }
-
     public function getOutput(): ?string
     {
         return $this->output;
@@ -141,5 +118,43 @@ class Result
         $this->output = $output;
 
         return $this;
+    }
+
+    public function getCreateDate(): ?DateTime
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate(DateTime $createDate): self
+    {
+        $this->createDate = $createDate;
+
+        return $this;
+    }
+
+    public function getUpdateDate(): ?DateTime
+    {
+        return $this->updateDate;
+    }
+
+    public function setUpdateDate(DateTime $updateDate): self
+    {
+        $this->updateDate = $updateDate;
+
+        return $this;
+    }
+
+    public function array(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'output' => $this->getOutput(),
+            'time' => $this->getTime(),
+            'errors' => array_map(function (Error $error): array {
+                return $error->array();
+            }, iterator_to_array($this->getErrors())),
+            'createDate' => $this->getCreateDate(),
+            'updateDate' => $this->getUpdateDate(),
+        ];
     }
 }

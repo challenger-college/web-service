@@ -17,8 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'string')]
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
@@ -38,14 +37,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->setId(uniqid());
         $this->challenges = new ArrayCollection();
         $this->createDate = new ArrayCollection();
         $this->exercises = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?string
     {
         return $this->id;
+    }
+
+    public function setId(string $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getEmail(): ?string
@@ -171,5 +178,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function array(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'roles' => $this->getRoles(),
+        ];
     }
 }

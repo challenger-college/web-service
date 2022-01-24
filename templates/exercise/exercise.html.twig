@@ -60,20 +60,28 @@
         var editor = ace.edit("editor");
         editor.setTheme("ace/theme/dracula");
         editor.session.setMode("ace/mode/python");
+        editor.focus();
+        editor.navigateFileEnd();
     </script>
 
     <script>
         function submit() {
             $("button#submit").attr('disabled', 'true');
             $("button#submit").addClass('disabled');
-            $.post("{{ path('api_exercise_submit', {'challenge_id': challenge.id, 'exercise_id': exercise.id}) }}", {content: editor.getSession().getValue()}, function (data, status) {
+            $.post(
+                "{{ path('api_exercise_submit', {'exercise_id': exercise.id}) }}", 
+                {
+                    content: editor.getSession().getValue()
+                }, function (data, status) {
                 if (status === "success") {
                     console.log('Exercise submited, wait exercise result response.')
                     let interval = setInterval(() => {
                         if ($("button#submit").attr('loading') === "false") {
                             console.log('Onload')
-                            let url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id' }) }}";
-                            url = url.replace('result_id', data.id);
+                            console.log(data);
+                            var url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id' }) }}";
+                            url = url.replace('result_id', data.token);
+                            console.log(url, data);
                             $.get(url, function (result, status, xhr) {
                                 console.log(result, result.output);
                                 if (xhr.status === 200) {

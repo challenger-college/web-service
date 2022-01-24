@@ -12,7 +12,7 @@ class Error
     #[ORM\Column(type: 'string')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Result::class, inversedBy: 'errors', cascade: ["persist"])]
+    #[ORM\ManyToOne(targetEntity: Result::class, inversedBy: 'errors', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private $result;
 
@@ -58,5 +58,13 @@ class Error
         $this->message = $message;
 
         return $this;
+    }
+
+    public function array(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'message' => $this->getMessage(),
+        ];
     }
 }
