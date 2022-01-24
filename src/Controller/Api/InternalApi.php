@@ -61,6 +61,11 @@ class InternalApi extends AbstractController
             return $this->json(['error' => 'Result not found.'], Response::HTTP_NOT_FOUND);
         }
 
-        return $this->json([$result->array()], Response::HTTP_ACCEPTED);
+        if ($result->getOutput()):
+            return $this->json($result->array(), Response::HTTP_OK);
+        else:
+            return $this->json($result->array(), Response::HTTP_ACCEPTED);
+        endif;
+
     }
 }
