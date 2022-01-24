@@ -26,7 +26,7 @@ class ExerciseController extends AbstractController
      * @todo Check if User is connected
      */
     #[Route('/exercise/{challenge_id}/{exercise_id}', name: 'exercise', defaults: ['exercise_id' => null])]
-    public function exercise(Request $request, Session $session, string $challenge_id, ?string $exercise_id = null, EntityManagerInterface $em): Response
+    public function exercise(EntityManagerInterface $em, Session $session, string $challenge_id, ?string $exercise_id = null): Response
     {
         $challenge = $em->getRepository(Challenge::class)->find($challenge_id);
 
