@@ -40,7 +40,7 @@ class ExerciseController extends AbstractController
             ->findOneBy([
                 'author' => $this->getUser(),
                 'challenge' => $challenge,
-                'exercise' => $exercise_id,
+                'id' => $exercise_id,
             ]
         );
 
