@@ -65,41 +65,62 @@
     </script>
 
     <script>
-        function submit() {
-            $("button#submit").attr('disabled', 'true');
-            $("button#submit").addClass('disabled');
-            $.post(
-                "{{ path('api_exercise_submit', {'exercise_id': exercise.id}) }}", 
-                {
-                    content: editor.getSession().getValue()
-                }, function (data, status) {
-                if (status === "success") {
-                    console.log('Exercise submited, wait exercise result response.')
-                    let interval = setInterval(() => {
-                        if ($("button#submit").attr('loading') === "false") {
-                            console.log('Onload')
-                            console.log(data);
-                            var url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id' }) }}";
-                            url = url.replace('result_id', data.token);
-                            console.log(url, data);
-                            $.get(url, function (result, status, xhr) {
-                                console.log(result, result.output);
-                                if (xhr.status === 200) {
-                                    $("button#submit").attr('loading', 'false');
-                                    $("button#submit").attr('disabled', 'false');
-                                    $("button#submit").removeClass('disabled');
-                                    clearInterval(interval);
-                                }
-                            });
-                        }                      
-                    }, 5000);
-                } else {
-                    console.log("Fail exercise submission");
-                    $("button#submit").attr('loading', 'false');
-                    $("button#submit").attr('disabled', 'false');
-                    $("button#submit").removeClass('disabled');
-                }
-            });
+
+        async function submit() {
+          let token = await send_exercise();
+          while (!token) {
+            token = await send_exercise();
+          }
+          let exercise_response = await get_response_exercise(token);
+          while (exercise_response === false) {
+            await sleep(2000)
+            exercise_response = await get_response_exercise(token);
+          }
+          const get_box = document.querySelector(".card-body");
+          const node_output = document.createElement("p")
+          node_output.innerText = exercise_response.output
+
+          const node_exec = document.createElement("p")
+          node_exec.innerText = `Exec time : ${exercise_response.time}ms`
+          get_box.appendChild(node_output);
+          get_box.appendChild(node_exec);
+
+        }
+
+        async function send_exercise() {
+          console.log(editor.getSession().getValue())
+          let formData = new FormData();
+          formData.append("content", editor.getSession().getValue())
+          let request_options = {
+            method: "POST",
+            body: formData
+          };
+          let url = "{{ path('api_exercise_submit', {'exercise_id': exercise.id}) }}"
+          console.log(url)
+          let response = await fetch(url,request_options);
+          if (response.status === 201) {
+            const json_data = await response.json();
+            console.log(json_data)
+            return json_data.token;
+          } else {
+            return false;
+          }
+        }
+
+        async function get_response_exercise(token) {
+          let url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id' }) }}";
+          url = url.replace('result_id', token);
+          let request = await fetch(url);
+          const json_data = await request.json();
+          if (!(json_data.output === null)) {
+            return json_data
+          } else {
+            return false
+          }
+        }
+
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
         }
     </script>
 {% endblock %}
