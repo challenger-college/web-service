@@ -40,7 +40,7 @@ class Challenge
     #[ORM\JoinColumn(nullable: false)]
     private $author;
 
-    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Test::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Test::class, orphanRemoval: true, cascade: ['persist'])]
     private $tests;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
