@@ -113,11 +113,11 @@ class ExerciseApi extends AbstractController
                 $exercise->setValidated(false);
                 if ($request->get('error')) {
                     $error = new Error();
-                    $error->setMessage($request->get('error'))->setResult($result);
+                    $error->setMessage($request->get('error'))->setLineNumber($request->get('line_number'))->setResult($result);
                 }
                 foreach ($request->get('errors') ?? [] as $message) {
                     $error = new Error();
-                    $error->setMessage($message)->setResult($result);
+                    $error->setMessage($message)->setLineNumber($request->get('line_number'))->setResult($result);
                 }
             }
 

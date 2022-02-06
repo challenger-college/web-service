@@ -19,7 +19,7 @@ class Result
     #[ORM\JoinColumn(nullable: false)]
     private $exercise;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: 'float', nullable: true)]
     private $time;
 
     #[ORM\OneToMany(mappedBy: 'result', targetEntity: Error::class, orphanRemoval: true)]

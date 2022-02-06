@@ -19,6 +19,9 @@ class Error
     #[ORM\Column(type: 'text')]
     private $message;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $line_number;
+
     public function __construct()
     {
         $this->setId(uniqid());
@@ -66,5 +69,17 @@ class Error
             'id' => $this->getId(),
             'message' => $this->getMessage(),
         ];
+    }
+
+    public function getLineNumber(): ?int
+    {
+        return $this->line_number;
+    }
+
+    public function setLineNumber(?int $line_number): self
+    {
+        $this->line_number = $line_number;
+
+        return $this;
     }
 }

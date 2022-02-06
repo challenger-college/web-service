@@ -40,7 +40,7 @@ class ExerciseController extends AbstractController
                 'author' => $this->getUser(),
                 'challenge' => $challenge,
                 'id' => $exercise_id,
-            ]
+            ], ['updateDate' => 'DESC']
         );
 
         if (!$exercise) {
