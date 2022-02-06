@@ -16,6 +16,6 @@ Use token API (found in `.env`) in **POST** or **GET** request for authenticate 
         * isValid (boolean)
         * template (text)
 * List of exercises submited and not validated **GET** `/api/exercises?token={TOKEN}`.
-* Edit exercise validation **POST** `/api/exercise/{exercise_id}/check?token={TOKEN}`.
+* Edit exercise validation **POST** `/api/exercise/{exercise_id}/check/{result_id}?token={TOKEN}`.
     * parameters:
         * isValid (boolean)

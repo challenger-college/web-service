@@ -40,7 +40,7 @@ class Challenge
     #[ORM\JoinColumn(nullable: false)]
     private $author;
 
-    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Test::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Test::class, orphanRemoval: true, cascade: ['persist'])]
     private $tests;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
@@ -68,8 +68,10 @@ class Challenge
         return $this->id;
     }
 
-    public function setId(string $id): self {
+    public function setId(string $id): self
+    {
         $this->id = $id;
+
         return $this;
     }
 
@@ -133,24 +135,24 @@ class Challenge
         return $this;
     }
 
-    public function getCreateDate(): ?\DateTime
+    public function getCreateDate(): ?DateTime
     {
         return $this->createDate;
     }
 
-    public function setCreateDate(\DateTime $createDate): self
+    public function setCreateDate(DateTime $createDate): self
     {
         $this->createDate = $createDate;
 
         return $this;
     }
 
-    public function getUpdateDate(): ?\DateTime
+    public function getUpdateDate(): ?DateTime
     {
         return $this->updateDate;
     }
 
-    public function setUpdateDate(?\DateTime $updateDate): self
+    public function setUpdateDate(?DateTime $updateDate): self
     {
         $this->updateDate = $updateDate;
 
@@ -241,21 +243,22 @@ class Challenge
         return $this;
     }
 
-    public function array(): array {
-        foreach ($this->getTests() ?? [] as $test):
+    public function array(): array
+    {
+        foreach ($this->getTests() ?? [] as $test) {
             $inputs = [];
-            foreach ($test->getInputs() as $input):
+            foreach ($test->getInputs() as $input) {
                 $inputs[] = ['name' => $input->getName(), 'value' => $input->getValue()];
-            endforeach;
+            }
             $tests[] = ['inputs' => $inputs, 'output' => $test->getOutput()->getValue()];
-        endforeach;
-        
+        }
+
         return [
             'id' => $this->getId(),
             'function_name' => $this->getFunctionName(),
             'timeout' => $this->getTimeout(),
             'tests' => $tests,
-        ];    
+        ];
     }
 
     public function getImage(): ?string

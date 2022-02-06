@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use DateTime;
 use App\Repository\ResultRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -15,23 +15,30 @@ class Result
     #[ORM\Column(type: 'string')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Exercise::class, inversedBy: 'results')]
+    #[ORM\ManyToOne(targetEntity: Exercise::class, inversedBy: 'results', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
-    private $exercice;
+    private $exercise;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $time;
-
-    #[ORM\Column(type: 'datetime')]
-    private $createDate;
 
     #[ORM\OneToMany(mappedBy: 'result', targetEntity: Error::class, orphanRemoval: true)]
     private $errors;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private $output;
+
+    #[ORM\Column(type: 'datetime')]
+    private $createDate;
+
+    #[ORM\Column(type: 'datetime')]
+    private $updateDate;
+
     public function __construct()
     {
         $this->setId(uniqid());
-        $this->setCreateDate(new DateTime());
+        $this->setCreateDate($datetime = new DateTime());
+        $this->setUpdateDate($datetime);
         $this->errors = new ArrayCollection();
     }
 
@@ -40,20 +47,21 @@ class Result
         return $this->id;
     }
 
-    public function setId(string $id): self 
+    public function setId(string $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 
-    public function getExercice(): ?Exercise
+    public function getExercise(): ?Exercise
     {
-        return $this->exercice;
+        return $this->exercise;
     }
 
-    public function setExercice(?Exercise $exercice): self
+    public function setExercise(?Exercise $exercise): self
     {
-        $this->exercice = $exercice;
+        $this->exercise = $exercise;
 
         return $this;
     }
@@ -63,21 +71,9 @@ class Result
         return $this->time;
     }
 
-    public function setTime(int $time): self
+    public function setTime(?int $time): self
     {
         $this->time = $time;
-
-        return $this;
-    }
-
-    public function getCreateDate(): ?\DateTime
-    {
-        return $this->createDate;
-    }
-
-    public function setCreateDate(\DateTime $createDate): self
-    {
-        $this->createDate = $createDate;
 
         return $this;
     }
@@ -112,16 +108,53 @@ class Result
         return $this;
     }
 
-    public function array(): array {
-        foreach ($this->getErrors() ?? [] as $error):
-            $errors[] = $error;
-        endforeach;
+    public function getOutput(): ?string
+    {
+        return $this->output;
+    }
 
+    public function setOutput(?string $output): self
+    {
+        $this->output = $output;
+
+        return $this;
+    }
+
+    public function getCreateDate(): ?DateTime
+    {
+        return $this->createDate;
+    }
+
+    public function setCreateDate(DateTime $createDate): self
+    {
+        $this->createDate = $createDate;
+
+        return $this;
+    }
+
+    public function getUpdateDate(): ?DateTime
+    {
+        return $this->updateDate;
+    }
+
+    public function setUpdateDate(DateTime $updateDate): self
+    {
+        $this->updateDate = $updateDate;
+
+        return $this;
+    }
+
+    public function array(): array
+    {
         return [
             'id' => $this->getId(),
+            'output' => $this->getOutput(),
             'time' => $this->getTime(),
+            'errors' => array_map(function (Error $error): array {
+                return $error->array();
+            }, iterator_to_array($this->getErrors())),
             'createDate' => $this->getCreateDate(),
-            'errors' => $errors ?? []
+            'updateDate' => $this->getUpdateDate(),
         ];
     }
 }

@@ -25,7 +25,14 @@
                             <p>{{ challenge.constraints }}</p>
                         </div>
                     {% endif %}
-
+                    {% for test in challenge.tests %}
+                        <ul>
+                            {% for input in test.inputs %}
+                                <li>{{ input.name }}: {{ input.value }}</li>
+                            {% endfor %}
+                            <li>Output: {{ test.output.value }}</li>
+                        </ul>
+                    {% endfor %}
                     <div class="form-group">
                         <div class="row">
                             <div class="col-lg-6">
@@ -33,12 +40,13 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="form-group">
                         <div id="editor">{{ exercise.content ?? challenge.template }}</div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-outline-success" onclick="submit();">Soumettre</button>
+                    <button id="submit" loading="false" type="submit" class="btn btn-outline-success" onclick="submit();">Soumettre</button>
                 </div>
             </div>
         </div>
@@ -52,16 +60,67 @@
         var editor = ace.edit("editor");
         editor.setTheme("ace/theme/dracula");
         editor.session.setMode("ace/mode/python");
+        editor.focus();
+        editor.navigateFileEnd();
     </script>
 
     <script>
-        function submit() {
-            var url = "{{ path('exercise', {'challenge_id': challenge.id, 'exercise_id': exercise.id}) }}";
-            $.post(url, {content: editor.getSession().getValue()}, function (data) {
-                if (data.status === "success") {
-                    window.location.href = url;
-                }
-            });
+
+        async function submit() {
+          let token = await send_exercise();
+          while (!token) {
+            token = await send_exercise();
+          }
+          let exercise_response = await get_response_exercise(token);
+          while (exercise_response === false) {
+            await sleep(2000)
+            exercise_response = await get_response_exercise(token);
+          }
+          const get_box = document.querySelector(".card-body");
+          const node_output = document.createElement("p")
+          node_output.innerText = exercise_response.output
+
+          const node_exec = document.createElement("p")
+          node_exec.innerText = `Exec time : ${exercise_response.time}ms`
+          get_box.appendChild(node_output);
+          get_box.appendChild(node_exec);
+
+        }
+
+        async function send_exercise() {
+          console.log(editor.getSession().getValue())
+          let formData = new FormData();
+          formData.append("content", editor.getSession().getValue())
+          let request_options = {
+            method: "POST",
+            body: formData
+          };
+          let url = "{{ path('api_exercise_submit', {'exercise_id': exercise.id}) }}"
+          console.log(url)
+          let response = await fetch(url,request_options);
+          if (response.status === 201) {
+            const json_data = await response.json();
+            console.log(json_data)
+            return json_data.token;
+          } else {
+            return false;
+          }
+        }
+
+        async function get_response_exercise(token) {
+          let url = "{{ path('api_exercise_result', {'exercise_id': exercise.id, 'result_id': 'result_id' }) }}";
+          url = url.replace('result_id', token);
+          let request = await fetch(url);
+          const json_data = await request.json();
+          if (!(json_data.output === null)) {
+            return json_data
+          } else {
+            return false
+          }
+        }
+
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
         }
     </script>
 {% endblock %}

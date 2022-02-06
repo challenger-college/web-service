@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ExerciseRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,9 +18,6 @@ class Exercise
     #[ORM\Column(type: 'text', nullable: true)]
     private $content;
 
-    #[ORM\Column(type: 'datetime')]
-    private $createDate;
-
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'exercises')]
     #[ORM\JoinColumn(nullable: false)]
     private $author;
@@ -31,17 +29,31 @@ class Exercise
     #[ORM\Column(type: 'boolean', nullable: true)]
     private $validated;
 
-    #[ORM\OneToMany(mappedBy: 'exercice', targetEntity: Result::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'exercise', targetEntity: Result::class, orphanRemoval: true, cascade: ['persist'])]
     private $results;
+
+    #[ORM\Column(type: 'datetime')]
+    private $createDate;
+
+    #[ORM\Column(type: 'datetime')]
+    private $updateDate;
+
+    #[ORM\Column(type: 'boolean')]
+    private $onLoad;
 
     public function __construct()
     {
         $this->setId(uniqid());
+        $this->setCreateDate($datetime = new DateTime());
+        $this->setUpdateDate($datetime);
+        $this->setOnLoad(false);
         $this->results = new ArrayCollection();
     }
 
-    public function setId(string $id): self {
+    public function setId(string $id): self
+    {
         $this->id = $id;
+
         return $this;
     }
 
@@ -62,12 +74,12 @@ class Exercise
         return $this;
     }
 
-    public function getCreateDate(): ?\DateTime
+    public function getCreateDate(): ?DateTime
     {
         return $this->createDate;
     }
 
-    public function setCreateDate(\DateTime $createDate): self
+    public function setCreateDate(DateTime $createDate): self
     {
         $this->createDate = $createDate;
 
@@ -122,7 +134,7 @@ class Exercise
     {
         if (!$this->results->contains($result)) {
             $this->results[] = $result;
-            $result->setExercice($this);
+            $result->setExercise($this);
         }
 
         return $this;
@@ -132,10 +144,52 @@ class Exercise
     {
         if ($this->results->removeElement($result)) {
             // set the owning side to null (unless already changed)
-            if ($result->getExercice() === $this) {
-                $result->setExercice(null);
+            if ($result->getExercise() === $this) {
+                $result->setExercise(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUpdateDate(): ?DateTime
+    {
+        return $this->updateDate;
+    }
+
+    public function setUpdateDate(DateTime $updateDate): self
+    {
+        $this->updateDate = $updateDate;
+
+        return $this;
+    }
+
+    public function array(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'content' => $this->getContent(),
+            'author' => $this->getAuthor()->array(),
+            'challenge' => $this->getChallenge()->array(),
+            'validated' => $this->getValidated(),
+            'results' => array_map(function ($result) {
+                    return $result->array();
+                }, iterator_to_array($this->getResults())
+            ),
+            'token' => $this->getResults()?->last()?->getId(),
+            'createDate' => $this->getCreateDate(),
+            'updateDate' => $this->getUpdateDate(),
+        ];
+    }
+
+    public function getOnLoad(): ?bool
+    {
+        return $this->onLoad;
+    }
+
+    public function setOnLoad(bool $onLoad): self
+    {
+        $this->onLoad = $onLoad;
 
         return $this;
     }

@@ -12,7 +12,7 @@ class Error
     #[ORM\Column(type: 'string')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: Result::class, inversedBy: 'errors')]
+    #[ORM\ManyToOne(targetEntity: Result::class, inversedBy: 'errors', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private $result;
 
@@ -29,7 +29,7 @@ class Error
         return $this->id;
     }
 
-    public function setId(string $id): self 
+    public function setId(string $id): self
     {
         $this->id = $id;
 
@@ -58,5 +58,13 @@ class Error
         $this->message = $message;
 
         return $this;
+    }
+
+    public function array(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'message' => $this->getMessage(),
+        ];
     }
 }
